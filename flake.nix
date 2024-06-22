@@ -27,7 +27,7 @@
       username = builtins.getEnv "USER";
       useremail = "glassesneo@protonmail.com";
       system = builtins.currentSystem;
-      hostname = "Usurai";
+      hostname = "Oboro";
       specialArgs =
         inputs
         // {
@@ -66,7 +66,7 @@
           "Narukami" = inputs.nixpkgs.lib.nixosSystem commonNixOSConfigurations;
         };
         darwinConfigurations = {
-          "Usurai" = nix-darwin.lib.darwinSystem commonDarwinConfigurations;
+          "Oboro" = nix-darwin.lib.darwinSystem commonDarwinConfigurations;
         };
         homeConfigurations."${username}" = home-manager.lib.homeManagerConfiguration {
           extraSpecialArgs = specialArgs;
