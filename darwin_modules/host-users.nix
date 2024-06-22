@@ -1,4 +1,4 @@
-{ hostname, username, ... }:
+{ username, hostname, ... }:
 
 #############################################################
 #
@@ -13,7 +13,6 @@
 
   users.users."${username}"= {
     name = username;
-    home = "/Users/${username}";
     description = username;
   };
 

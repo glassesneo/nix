@@ -26,7 +26,7 @@
       username = "neo";
       useremail = "glassesneo@protonmail.com";
       system = builtins.currentSystem;
-      hostname = "surai";
+      hostname = "Usurai";
       specialArgs =
         inputs
         // {
@@ -53,6 +53,7 @@
         ];
       };
       homeConfigurations."${username}" = home-manager.lib.homeManagerConfiguration {
+        extraSpecialArgs = specialArgs;
         pkgs = nixpkgs.legacyPackages.${system};
         modules = [ ./home.nix ];
       };
