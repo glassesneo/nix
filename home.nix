@@ -1,4 +1,4 @@
-{ config, lib, pkgs, username, hostname, ... }:
+{ config, lib, pkgs, hostname, ... }:
 let respectiveConfig = import ./hosts/${hostname}.nix;
 in
   lib.recursiveUpdate
@@ -6,6 +6,9 @@ in
     # this is internal compatibility configuration 
     # for home-manager, don't change this!
     xdg.enable = true;
+
+    home.username = builtins.getEnv "USER";
+    home.homeDirectory = builtins.getEnv "HOME";
 
     home.stateVersion = "24.11";
     # Let home-manager install and manage itself.

@@ -23,7 +23,7 @@
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager }:
     let
-      username = "neo";
+      username = builtins.getEnv "USER";
       useremail = "glassesneo@protonmail.com";
       system = builtins.currentSystem;
       hostname = "Usurai";
