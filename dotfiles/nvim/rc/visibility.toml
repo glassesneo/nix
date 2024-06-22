@@ -1,0 +1,22 @@
+[[plugins]]
+repo = 'nvim-zh/colorful-winsep.nvim'
+on_event = 'WinNew'
+hooks_file = "$BASE_DIR/hooks/colorful-winsep.lua"
+
+
+# [[plugins]]
+# repo = 'shellRaining/hlchunk.nvim'
+# on_event = ['BufNewFile', 'BufRead']
+# hooks_file = "$BASE_DIR/hooks/hlchunk.lua"
+
+
+[[plugins]]
+repo = 'unblevable/quick-scope'
+on_event = ['BufNewFile', 'BufRead']
+hooks_file = "$BASE_DIR/hooks/quick-scope.lua"
+
+
+[[plugins]]
+repo = 'kevinhwang91/nvim-hlslens'
+lazy = false
+hooks_file = "$BASE_DIR/hooks/nvim-hlslens.lua"

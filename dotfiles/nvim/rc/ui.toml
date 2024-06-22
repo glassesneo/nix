@@ -1,0 +1,19 @@
+[[plugins]]
+repo = 'stevearc/aerial.nvim'
+depends = ['nvim-treesitter', 'nvim-web-devicons']
+# on_cmd = ['AerialOpen', 'AerialClose']
+on_map = ['<Space>a']
+hooks_file = '$BASE_DIR/hooks/aerial.lua'
+
+
+[[plugins]]
+repo = 'stevearc/dressing.nvim'
+on_lua = ['inc-rename.nvim']
+hooks_file = '$BASE_DIR/hooks/dressing.lua'
+
+
+[[plugins]]
+repo = 'petertriho/nvim-scrollbar'
+depends = ['nvim-lspconfig', 'nvim-hlslens', 'gitsigns.nvim']
+on_event = ['BufNewFile', 'BufRead']
+hooks_file = '$BASE_DIR/hooks/nvim-scrollbar.lua'

@@ -1,0 +1,15 @@
+[[plugins]]
+repo = 'tpope/vim-fugitive'
+on_cmd = 'Git'
+
+
+[[plugins]]
+repo = 'lewis6991/gitsigns.nvim'
+on_event = ['BufNewFile', 'BufRead']
+hooks_file = '$BASE_DIR/hooks/gitsigns.lua'
+
+
+[[plugins]]
+repo = 'rhysd/git-messenger.vim'
+on_cmd = 'GitMessenger'
+on_map = { n = '<Leader>gm' }

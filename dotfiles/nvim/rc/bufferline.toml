@@ -1,0 +1,5 @@
+[[plugins]]
+repo = 'akinsho/bufferline.nvim'
+depends = 'nvim-web-devicons'
+on_event = ['BufNewFile', 'BufRead']
+hooks_file = '$BASE_DIR/hooks/bufferline.lua'

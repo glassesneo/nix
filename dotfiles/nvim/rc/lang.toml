@@ -1,0 +1,17 @@
+[[plugins]]
+repo = 'alaviss/nim.nvim'
+on_ft = ['nim', 'nims', 'nimble']
+
+
+[[plugins]]
+repo = 'Julian/lean.nvim'
+depends = ['nvim-lspconfig', 'plenary.nvim']
+on_event = ['BufReadPre *.lean', 'BufNewFile *.lean']
+# hooks_file = '$BASE_DIR/lean.lua'
+
+
+# [plugins.ftplugin]
+# lua_markdown = '$BASE_DIR/ftplugin/markdown.lua'
+# lua_nim = '$BASE_DIR/ftplugin/nim.lua'
+# lua_elm = '$BASE_DIR/ftplugin/elm.lua'
+# lua_lua = '$BASE_DIR/ftplugin/lua.lua'

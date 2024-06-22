@@ -1,0 +1,4 @@
+[[plugins]]
+repo = 'sainnhe/everforest'
+on_event = 'VimEnter'
+hooks_file = "$BASE_DIR/hooks/everforest.lua"

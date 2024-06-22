@@ -1,0 +1,12 @@
+[[plugins]]
+repo = 'nvim-lualine/lualine.nvim'
+depends = ['nvim-web-devicons']
+on_event = ['BufNewFile', 'BufRead']
+hooks_file = '$BASE_DIR/hooks/lualine.lua'
+
+
+[[plugins]]
+repo = 'SmiteshP/nvim-navic'
+depends = ['nvim-lspconfig']
+on_lua = 'lualine'
+hooks_file = '$BASE_DIR/hooks/nvim-navic.lua'

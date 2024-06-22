@@ -1,0 +1,22 @@
+local utils = require("utils")
+local map = utils.map
+
+vim.g.mapleader = " "
+map("i", "jj", [[<ESC>]])
+map("t", "jj", [[<C-\><C-n>]])
+map("n", "<S-h>", vim.cmd["bprev"])
+map("n", "<S-l>", vim.cmd["bnext"])
+map("n", "d<Leader>h", [[d^]])
+map("n", "d<Leader>l", [[d$]])
+map("n", "q", [[<Nop>]])
+map({ "n", "v" }, "j", [[gj]])
+map({ "n", "v" }, "k", [[gk]])
+map({ "n", "v" }, "<C-h>", "[(")
+map({ "n", "v" }, "<C-l>", "])")
+map({ "n", "v" }, "<Leader>h", [[^]])
+map({ "n", "v" }, "<Leader>l", [[$]])
+map({ "n", "v" }, "<Leader>w", vim.cmd["w"])
+map({ "n", "v" }, "<Left>", [[<Nop>]])
+map({ "n", "v" }, "<Right>", [[<Nop>]])
+map({ "n", "v" }, "<Up>", [[<Nop>]])
+map({ "n", "v" }, "<Down>", [[<Nop>]])

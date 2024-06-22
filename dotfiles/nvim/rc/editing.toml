@@ -1,0 +1,33 @@
+[[plugins]]
+repo = 'uga-rosa/ccc.nvim'
+on_cmd = [
+  'CccPick',
+  'CccConvert',
+  'CccHighlighterEnable',
+  'CccHighlighterDisable',
+  'CccHighlighterToggle',
+]
+on_event = ['BufNewFile', 'BufRead']
+# on_map = { n = '<Leader>c' }
+hooks_file = '$BASE_DIR/hooks/ccc.lua'
+
+
+[[plugins]]
+repo = 'smjonas/inc-rename.nvim'
+depends = ['dressing.nvim']
+on_map = { n = ['<Leader>rn'] }
+hooks_file = '$BASE_DIR/hooks/inc-rename.lua'
+
+
+[[plugins]]
+repo = 'cohama/lexima.vim'
+on_event = ['InsertEnter']
+hooks_file = "$BASE_DIR/hooks/lexima.lua"
+
+
+[[plugins]]
+repo = 'kylechui/nvim-surround'
+rev = '*'
+frozen = true
+on_map = { n = ['ys', 'ds', 'cs'] }
+hooks_file = '$BASE_DIR/hooks/nvim-surround.lua'

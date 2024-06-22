@@ -1,0 +1,16 @@
+[[plugins]]
+repo = 'neovim/nvim-lspconfig'
+on_event = ['BufNewFile', 'BufRead']
+hooks_file = '$BASE_DIR/hooks/nvim-lspconfig.lua'
+
+
+[[plugins]]
+repo = 'ray-x/lsp_signature.nvim'
+depends = 'nvim-lspconfig'
+on_lua = 'lspconfig'
+
+
+# [[plugins]]
+# repo = 'onsails/lspkind.nvim'
+# on_source = 'nvim-lspconfig'
+# hooks_file = '$BASE_DIR/hooks/lspkind.lua'

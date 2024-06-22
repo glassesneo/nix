@@ -1,0 +1,24 @@
+[[plugins]]
+repo = 'nvim-treesitter/nvim-treesitter'
+on_event = 'VimEnter'
+on_cmd = ['TSInstall', 'TSUpdate']
+hooks_file = '$BASE_DIR/hooks/nvim-treesitter.lua'
+
+
+# [[plugins]]
+# repo = 'RRethy/nvim-treesitter-textsubjects'
+# on_source = 'nvim-treesitter'
+
+
+[[plugins]]
+repo = 'nvim-treesitter/nvim-treesitter-context'
+on_event = ['BufNewFile', 'BufRead']
+on_cmd = ['TSContextEnable', 'TSContextDisable', 'TSContextToggle']
+hooks_file = '$BASE_DIR/hooks/nvim-treesitter-context.lua'
+
+
+[[plugins]]
+repo = 'JoosepAlviste/nvim-ts-context-commentstring'
+depends = ['nvim-treesitter']
+on_source = 'mini.comment'
+hooks_file = '$BASE_DIR/hooks/nvim-ts-context-commentstring.lua'

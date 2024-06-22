@@ -1,0 +1,8 @@
+[[plugins]]
+repo = 'nvim-tree/nvim-web-devicons'
+on_lua = ['oil', 'bufferline', 'lualine', 'aerial']
+
+
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'
+on_lua = ['lean']
