@@ -11,7 +11,6 @@
     isNormalUser = true;
     home = "/home/neo";
     extraGroups = [ "wheel" "networkmanager" ];
-    shell = pkgs.zsh;
   };
 
   boot.kernelPackages = pkgs.linuxKernel.packages.linux_zen;
