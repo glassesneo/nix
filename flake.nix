@@ -63,7 +63,7 @@
     in
       {
         nixosConfigurations = {
-          "Aotsuyu" = inputs.nixpkgs.lib.nixosSystem commonNixOSConfigurations;
+          "Narukami" = inputs.nixpkgs.lib.nixosSystem commonNixOSConfigurations;
         };
         darwinConfigurations = {
           "Usurai" = nix-darwin.lib.darwinSystem commonDarwinConfigurations;
