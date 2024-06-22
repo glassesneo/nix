@@ -18,7 +18,7 @@
 
   boot.kernelPackages = pkgs.linuxKernel.packages.linux_zen;
 
-  networking.hostName = "Aotsuyu";
+  networking.hostName = "Narukami";
 
   system.stateVersion = "23.11";
 
