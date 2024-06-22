@@ -1,5 +1,8 @@
+{ pkgs, commonPackages }:
 {
   home = {
-    username = "neo";
+    packages = with pkgs; [
+      xsel
+    ] ++ commonPackages;
   };
 }

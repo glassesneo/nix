@@ -1,5 +1,20 @@
 { config, lib, pkgs, hostname, ... }:
-let respectiveHostConfig = import ./hosts/${hostname}.nix;
+let
+  commonPackages = with pkgs; [
+    sl
+    bat
+    ripgrep
+    fd
+    duf
+    tree
+    xsel
+    deno
+    nim2
+    nimble
+  ];
+  respectiveHostConfig = import ./hosts/${hostname}.nix {
+    inherit pkgs commonPackages;
+  };
 in
   lib.recursiveUpdate
   {
@@ -14,18 +29,6 @@ in
       sessionVariables = {
         EDITOR = "nvim";
       };
-      packages = with pkgs; [
-        sl
-        bat
-        ripgrep
-        fd
-        duf
-        tree
-        xsel
-        deno
-        nim2
-        nimble
-      ];
       shellAliases = {
         ls = "eza";
         bd = "cd ..";
@@ -102,9 +105,6 @@ in
     . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
   fi
   '';
-      profileExtra = ''
-  eval $(/opt/homebrew/bin/brew shellenv)
-  '';
       history = {
         extended = true;
         size = 10000;
@@ -148,6 +148,8 @@ in
       extraPackages = with pkgs; [
         # denops
         deno
+        # tree-sitter
+        gcc
         # nix
         nil
         nixpkgs-fmt
