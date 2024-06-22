@@ -13,6 +13,7 @@
 
   users.users."${username}"= {
     name = username;
+    home = builtins.getEnv "HOME";
     description = username;
   };
 
