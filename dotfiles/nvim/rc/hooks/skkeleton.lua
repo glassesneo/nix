@@ -6,9 +6,9 @@ utils.map({ "i" }, "<C-l>", "<Plug>(skkeleton-disable)")
 
 --- lua_source {{{
 vim.fn["skkeleton#config"]({
-  globalDictionaries = { "~/.config/skk/SKK-JISYO.L" },
+  globalDictionaries = { "$HOME/.config/skk/SKK-JISYO.L" },
   eggLikeNewline = true,
-  userDictionary = "~/.config/.skkeleton"
+  userDictionary = "$HOME/.config/.skkeleton",
 })
 vim.fn["skkeleton#register_keymap"]("input", ":", "henkanPoint")
 vim.fn["skkeleton#register_kanatable"]("rom", {

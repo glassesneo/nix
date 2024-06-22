@@ -7,21 +7,21 @@ require("commons/options")
 vim.env.LANG = "en_US.UTF-8"
 
 -- vim.env.BASE_DIR = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h")
-vim.env.BASE_DIR = "~/.config/nvim/rc"
+vim.env.BASE_DIR = "$HOME/.config/nvim/rc"
 
-local dpp_src = "~/.cache/dpp/repos/github.com/Shougo/dpp.vim"
-local denops_src = "~/.cache/dpp/repos/github.com/vim-denops/denops.vim"
+local dpp_src = "$HOME/.cache/dpp/repos/github.com/Shougo/dpp.vim"
+local denops_src = "$HOME/.cache/dpp/repos/github.com/vim-denops/denops.vim"
 
 vim.opt.runtimepath:prepend(dpp_src)
 local dpp = require("dpp")
 
-local dpp_base = "~/.cache/dpp"
+local dpp_base = "$HOME/.cache/dpp"
 local dpp_config = "$BASE_DIR/dpp_config.ts"
 
-local ext_toml = "~/.cache/dpp/repos/github.com/Shougo/dpp-ext-toml"
-local ext_lazy = "~/.cache/dpp/repos/github.com/Shougo/dpp-ext-lazy"
-local ext_installer = "~/.cache/dpp/repos/github.com/Shougo/dpp-ext-installer"
-local ext_git = "~/.cache/dpp/repos/github.com/Shougo/dpp-protocol-git"
+local ext_toml = "$HOME/.cache/dpp/repos/github.com/Shougo/dpp-ext-toml"
+local ext_lazy = "$HOME/.cache/dpp/repos/github.com/Shougo/dpp-ext-lazy"
+local ext_installer = "$HOME/.cache/dpp/repos/github.com/Shougo/dpp-ext-installer"
+local ext_git = "$HOME/.cache/dpp/repos/github.com/Shougo/dpp-protocol-git"
 
 vim.opt.runtimepath:append(ext_toml)
 vim.opt.runtimepath:append(ext_git)
