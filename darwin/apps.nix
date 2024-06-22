@@ -31,15 +31,22 @@
     };
 
     taps = [
-      # "homebrew/cask-fonts"
-      # "homebrew/services"
-      # "homebrew/cask-versions"
+      "homebrew/services"
     ];
 
     # `brew install`
-    brews = [];
+    brews = [
+    ];
 
     # `brew install --cask`
-    casks = [];
+    casks = [
+      "arc"
+      "warp"
+      "proton-drive"
+      "proton-pass"
+      "karabiner-elements"
+      "discord"
+      "hot"
+    ];
   };
 }
