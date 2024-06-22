@@ -33,7 +33,7 @@ in
       userEmail = "glassesneo@protonmail.com";
       extraConfig = {
         commit = {
-          template = "/Users/neo/.config/git/.gitmsg";
+          template = "${config.xdg.configHome}/git/.gitmsg";
         };
         core = {
           editor = "nvim";
