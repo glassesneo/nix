@@ -1,5 +1,5 @@
 { config, lib, pkgs, hostname, ... }:
-let respectiveConfig = import ./hosts/${hostname}.nix;
+let respectiveHostConfig = import ./hosts/${hostname}.nix;
 in
   lib.recursiveUpdate
   {
@@ -7,28 +7,31 @@ in
     # for home-manager, don't change this!
     xdg.enable = true;
 
-    home.username = builtins.getEnv "USER";
-    home.homeDirectory = builtins.getEnv "HOME";
-
-    home.stateVersion = "24.11";
-    # Let home-manager install and manage itself.
-    programs.home-manager.enable = true;
-
-    home.sessionVariables = {
-      EDITOR = "nvim";
+    home = {
+      username = builtins.getEnv "USER";
+      homeDirectory = builtins.getEnv "HOME";
+      stateVersion = "24.11";
+      sessionVariables = {
+        EDITOR = "nvim";
+      };
+      packages = with pkgs; [
+        sl
+        bat
+        ripgrep
+        fd
+        duf
+        tree
+        deno
+        nim2
+        nimble
+      ];
+      shellAliases = {
+        ls = "eza";
+        bd = "cd ..";
+      };
     };
 
-    home.packages = [
-      pkgs.sl
-      pkgs.bat
-      pkgs.ripgrep
-      pkgs.fd
-      pkgs.duf
-      pkgs.tree
-      pkgs.deno
-      pkgs.nim2
-      pkgs.nimble
-    ];
+    programs.home-manager.enable = true;
 
     programs.git = {
       enable = true;
@@ -54,6 +57,7 @@ in
 
     programs.gh = {
       enable = true;
+      extensions = with pkgs; [ gh-markdown-preview ];
       settings = {
         git_protocol = "https";
         prompt = "enabled";
@@ -140,15 +144,17 @@ in
     programs.neovim = {
       enable = true;
       extraLuaConfig = builtins.readFile ./dotfiles/nvim/init.lua;
-      extraPackages = [
+      extraPackages = with pkgs; [
+        # denops
+        deno
         # nix
-        pkgs.nil
-        pkgs.nixpkgs-fmt
+        nil
+        nixpkgs-fmt
         # lua
-        pkgs.lua-language-server
-        pkgs.stylua
+        lua-language-server
+        stylua
         # toml
-        pkgs.taplo
+        taplo
       ];
     };
 
@@ -160,6 +166,7 @@ in
 
     xdg.configFile = {
       ".gitmsg" = {
+        target = "${config.xdg.configHome}/git/.gitmsg";
         text = ''
 # ==== Emojis ====
 # 🎉  :tada: Initial Commit
@@ -177,12 +184,9 @@ in
       };
       "nvim" = {
         source = ./dotfiles/nvim;
+        target = "${config.xdg.configHome}/nvim";
         recursive = true;
       };
     };
 
-    home.shellAliases = {
-      ls = "eza";
-      bd = "cd ..";
-    };
-  } respectiveConfig
+  } respectiveHostConfig
