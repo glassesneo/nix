@@ -143,7 +143,7 @@ in
 
     programs.neovim = {
       enable = true;
-      extraLuaConfig = builtins.readFile ./dotfiles/nvim/init.lua;
+      extraLuaConfig = builtins.readFile ../dotfiles/nvim/init.lua;
       extraPackages = with pkgs; [
         # denops
         deno
@@ -183,7 +183,7 @@ in
         '';
       };
       "nvim" = {
-        source = ./dotfiles/nvim;
+        source = ../dotfiles/nvim;
         target = "${config.xdg.configHome}/nvim";
         recursive = true;
       };

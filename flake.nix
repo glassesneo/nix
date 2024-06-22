@@ -38,7 +38,6 @@
         system = "x86_64-linux";
         modules = [
           ./nixos/configuration.nix
-          ./nixos/apps.nix
         ];
       };
 
@@ -56,7 +55,7 @@
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = specialArgs;
             home-manager.verbose = true;
-            home-manager.users."${username}" = import ./home.nix;
+            home-manager.users."${username}" = import ./home/home.nix;
           }
         ];
       };
@@ -72,7 +71,7 @@
         homeConfigurations."${username}" = home-manager.lib.homeManagerConfiguration {
           extraSpecialArgs = specialArgs;
           pkgs = nixpkgs.legacyPackages.${system};
-          modules = [ ./home.nix ];
+          modules = [ ./home/home.nix ];
         };
       };
 }

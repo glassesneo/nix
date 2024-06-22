@@ -19,7 +19,7 @@ export class Config extends BaseConfig {
       protocols: ["git"],
       extParams: {
         installer: {
-          githubAPIToken: githubAPITokenForDpp;
+          githubAPIToken: githubAPITokenForDpp,
         }
       }
     });
