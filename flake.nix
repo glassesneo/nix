@@ -34,32 +34,40 @@
           inherit username useremail hostname;
         };
 
+      commonNixOSConfigurations = {
+        system = "x86_64-linux";
+        modules = [
+          ./nixos/configuration.nix
+          ./nixos/apps.nix
+        ];
+      };
+
+      commonDarwinConfigurations = {
+          inherit specialArgs;
+        system = "aarch64-darwin";
+        modules = [
+          ./darwin/nix-core.nix
+          ./darwin/system.nix
+          ./darwin/host-users.nix
+          ./darwin/apps.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = specialArgs;
+            home-manager.verbose = true;
+            home-manager.users."${username}" = import ./home.nix;
+          }
+        ];
+      };
+
     in
       {
-        nixosConfigurations."${hostname}" = inputs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./nixos/configuration.nix
-            ./nixos/apps.nix
-          ];
+        nixosConfigurations = {
+          "Aotsuyu" = inputs.lib.nixosSystem commonNixOSConfigurations;
         };
-        darwinConfigurations."${hostname}" = nix-darwin.lib.darwinSystem {
-          inherit specialArgs;
-          system = "aarch64-darwin";
-          modules = [
-            ./darwin/nix-core.nix
-            ./darwin/system.nix
-            ./darwin/host-users.nix
-            ./darwin/apps.nix
-            home-manager.darwinModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = specialArgs;
-              home-manager.verbose = true;
-              home-manager.users."${username}" = import ./home.nix;
-            }
-          ];
+        darwinConfigurations = {
+          "Usurai" = nix-darwin.lib.darwinSystem commonDarwinConfigurations;
         };
         homeConfigurations."${username}" = home-manager.lib.homeManagerConfiguration {
           extraSpecialArgs = specialArgs;
