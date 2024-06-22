@@ -21,6 +21,7 @@ in
         fd
         duf
         tree
+        xsel
         deno
         nim2
         nimble
