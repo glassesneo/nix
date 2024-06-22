@@ -136,7 +136,7 @@ $all$character$directory
 
   programs.neovim = {
     enable = true;
-    extraLuaConfig = builtins.readFile ~/.config/nvim/init.lua;
+    extraLuaConfig = builtins.readFile ./dotfiles/nvim/init.lua;
     extraPackages = [
       # nix
       pkgs.nil
