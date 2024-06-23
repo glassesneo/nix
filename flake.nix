@@ -45,9 +45,8 @@
           inherit specialArgs;
         system = "aarch64-darwin";
         modules = [
-          ./darwin/nix-core.nix
+          ./darwin/configuration.nix
           ./darwin/system.nix
-          ./darwin/host-users.nix
           ./darwin/apps.nix
           home-manager.darwinModules.home-manager
           {
