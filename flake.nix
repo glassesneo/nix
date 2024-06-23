@@ -37,7 +37,7 @@
       commonNixOSConfigurations = {
         system = "x86_64-linux";
         modules = [
-          ./nixos/configuration.nix
+          ./system/nixos/configuration.nix
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
@@ -53,9 +53,9 @@
           inherit specialArgs;
         system = "aarch64-darwin";
         modules = [
-          ./darwin/configuration.nix
-          ./darwin/system.nix
-          ./darwin/apps.nix
+          ./system/darwin/configuration.nix
+          ./system/darwin/system.nix
+          ./system/darwin/apps.nix
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;

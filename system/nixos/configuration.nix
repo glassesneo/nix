@@ -30,8 +30,6 @@ in
 
     boot.kernelPackages = pkgs.linuxKernel.packages.linux_zen;
 
-    networking.hostName = hostname;
-
     system.stateVersion = "23.11";
 
     services.tailscale.enable = true;
