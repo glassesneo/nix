@@ -7,10 +7,7 @@
 
   networking = {
     hostName = hostname;
-    computerName = hostname;
   };
-
-  system.defaults.smb.NetBIOSName = hostname;
 
   nix = {
     settings = {
@@ -19,6 +16,4 @@
     };
     package = pkgs.nix;
   };
-
-  services.nix-daemon.enable = true;
 }

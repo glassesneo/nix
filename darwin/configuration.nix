@@ -20,4 +20,9 @@ in
       ];
       builders-use-substitutes = true;
     };
+    networking = {
+      computerName = hostname;
+    };
+
+    services.nix-daemon.enable = true;
   }

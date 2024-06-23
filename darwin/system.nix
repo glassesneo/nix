@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, hostname, ... }:
 
   ###################################################################################
   #
@@ -20,6 +20,8 @@
     '';
 
     defaults = {
+      smb.NetBIOSName = hostname;
+
       menuExtraClock.Show24Hour = true;  # show 24 hour clock
       dock = {
         autohide = true;
