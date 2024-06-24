@@ -16,6 +16,7 @@
     shellAliases = {
       ls = "eza";
       bd = "cd ..";
+      tree = "eza --tree";
     };
   };
 

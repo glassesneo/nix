@@ -6,7 +6,6 @@
     ripgrep
     fd
     duf
-    tree
     deno
     nim2
     nimble
