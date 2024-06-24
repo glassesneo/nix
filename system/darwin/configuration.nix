@@ -21,6 +21,7 @@ in
       builders-use-substitutes = true;
     };
     networking = {
+      hostName = hostname;
       computerName = hostname;
     };
 

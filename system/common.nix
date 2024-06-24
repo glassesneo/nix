@@ -1,12 +1,8 @@
-{ pkgs, username, hostname, ... }:
+{ pkgs, username, ... }:
 {
   users.users."${username}"= {
     name = username;
     home = builtins.getEnv "HOME";
-  };
-
-  networking = {
-    hostName = hostname;
   };
 
   nix = {

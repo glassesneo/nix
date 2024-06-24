@@ -25,6 +25,9 @@ in
       };
     };
 
+    networking = {
+      hostName = hostname;
+    };
 
     programs.zsh.enable = true;
 

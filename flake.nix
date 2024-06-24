@@ -27,11 +27,11 @@
       username = builtins.getEnv "USER";
       useremail = "glassesneo@protonmail.com";
       system = builtins.currentSystem;
-      hostname = "Oboro";
+      pkgs = nixpkgs.legacyPackages."${system}";
       specialArgs =
         inputs
         // {
-          inherit username useremail hostname;
+          inherit username useremail;
         };
 
       commonNixOSConfigurations = {
@@ -44,13 +44,13 @@
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = specialArgs;
             home-manager.verbose = true;
-            home-manager.users."${username}" = import ./home/home.nix;
+            home-manager.users."${username}" = import ./home/hosts/Narukami.nix;
           }
         ];
       };
 
       commonDarwinConfigurations = {
-          inherit specialArgs;
+        inherit specialArgs;
         system = "aarch64-darwin";
         modules = [
           ./system/darwin/configuration.nix
@@ -62,7 +62,7 @@
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = specialArgs;
             home-manager.verbose = true;
-            home-manager.users."${username}" = import ./home/home.nix;
+            home-manager.users."${username}" = import ./home/hosts/Oboro.nix;
           }
         ];
       };
@@ -75,10 +75,17 @@
         darwinConfigurations = {
           "Oboro" = nix-darwin.lib.darwinSystem commonDarwinConfigurations;
         };
-        homeConfigurations."${username}" = home-manager.lib.homeManagerConfiguration {
-          extraSpecialArgs = specialArgs;
-          pkgs = nixpkgs.legacyPackages."${system}";
-          modules = [ ./home/home.nix ];
+        homeConfigurations = {
+          "${username}@Narukami" = home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [ ./home/hosts/Narukami.nix ];
+            extraSpecialArgs = specialArgs;
+          };
+          "${username}@Oboro" = home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [ ./home/hosts/Oboro.nix ];
+            extraSpecialArgs = specialArgs;
+          };
         };
       };
 }

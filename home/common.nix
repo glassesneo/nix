@@ -1,8 +1,7 @@
-{ config, hostname, ... }:
+{ config, ... }:
 {
   imports = [
     ./app.nix
-    ./hosts/${hostname}.nix
   ];
 
   xdg.enable = true;
