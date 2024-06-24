@@ -3,7 +3,7 @@ let
   username = "neo";
   hostname = "Narukami";
   commonConfig = import ../common.nix {
-    inherit pkgs username hostname;
+    inherit pkgs username;
   };
 in
   lib.recursiveUpdate
