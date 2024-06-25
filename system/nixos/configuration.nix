@@ -42,5 +42,19 @@ in
       settings = {
         trusted-users = [ username ];
       };
+      gc = {
+        automatic = true;
+        dates = "weekly";
+        options = "--delete-older-than 7d";
+      };
+    };
+    virtualisation = {
+      docker = {
+        enable = true;
+        rootless = {
+          enable = true;
+          setSocketVariable = true; # Set $DOCKER_HOST
+        };
+      };
     };
   }
