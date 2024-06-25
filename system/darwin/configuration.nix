@@ -1,13 +1,9 @@
 { lib, pkgs, username, ... }:
 let
   hostname = "Oboro";
-  commonConfig = import ../common.nix {
-    inherit pkgs username hostname;
-  };
 in
-  lib.recursiveUpdate
-  commonConfig
   {
+    imports = [ ../common.nix ];
     nix.settings = {
       # substituers that will be considered before the official ones(https://cache.nixos.org)
       substituters = [

@@ -2,15 +2,11 @@
 let
   username = "neo";
   hostname = "Narukami";
-  commonConfig = import ../common.nix {
-    inherit pkgs username;
-  };
 in
-  lib.recursiveUpdate
-  commonConfig
   {
     imports = [
       <nixos-wsl/modules>
+      ../common.nix
     ];
 
     wsl.enable = true;

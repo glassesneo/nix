@@ -28,11 +28,9 @@
       useremail = "glassesneo@protonmail.com";
       system = builtins.currentSystem;
       pkgs = nixpkgs.legacyPackages."${system}";
-      specialArgs =
-        inputs
-        // {
-          inherit username useremail;
-        };
+      specialArgs = inputs // {
+        inherit username useremail;
+      };
 
       commonNixOSConfigurations = {
         inherit specialArgs;
