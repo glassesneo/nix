@@ -6,7 +6,7 @@ import {
   Plugin,
 } from "https://deno.land/x/dpp_vim@v0.0.5/types.ts";
 import { Denops, fn } from "https://deno.land/x/dpp_vim@v0.0.5/deps.ts";
-import { githubAPITokenForDpp } from "./credentials/credential.ts";
+//import { githubAPITokenForDpp } from "./credentials/credential.ts";
 
 export class Config extends BaseConfig {
   override async config(args: {
@@ -19,7 +19,7 @@ export class Config extends BaseConfig {
       protocols: ["git"],
       extParams: {
         installer: {
-          githubAPIToken: githubAPITokenForDpp,
+          // githubAPIToken: githubAPITokenForDpp,
         }
       }
     });
