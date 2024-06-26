@@ -8,8 +8,6 @@
     fd
     duf
     deno
-    nim2
-    nimble
   ];
 
   programs.git = {
