@@ -23,7 +23,7 @@ require("conform").setup({
     },
     nixfmt = {
       command = "nixpkgs-fmt",
-      args = "$FILENAME",
+      -- args = "$FILENAME",
     },
   },
 })

@@ -2,6 +2,7 @@
 {
   home.packages = with pkgs; [
     sl
+    nixpkgs-fmt
     bat
     ripgrep
     fd
@@ -126,7 +127,6 @@ $all$character$directory
       gcc
       # nix
       nil
-      nixpkgs-fmt
       # lua
       lua-language-server
       stylua

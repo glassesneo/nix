@@ -39,11 +39,13 @@
           ./system/nixos/configuration.nix
           home-manager.nixosModules.home-manager
           {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = specialArgs;
-            home-manager.verbose = true;
-            home-manager.users."${username}" = import ./home/hosts/Narukami.nix;
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = specialArgs;
+              verbose = true;
+              users."${username}" = import ./home/hosts/Narukami.nix;
+            };
           }
         ];
       };
@@ -55,11 +57,13 @@
           ./system/darwin/configuration.nix
           home-manager.darwinModules.home-manager
           {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = specialArgs;
-            home-manager.verbose = true;
-            home-manager.users."${username}" = import ./home/hosts/Oboro.nix;
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = specialArgs;
+              verbose = true;
+              users."${username}" = import ./home/hosts/Oboro.nix;
+            };
           }
         ];
       };
