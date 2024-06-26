@@ -17,6 +17,7 @@
       ls = "eza";
       bd = "cd ..";
       tree = "eza --tree";
+      nix-direnv = "echo 'use nix' >> .envrc && direnv allow";
     };
   };
 

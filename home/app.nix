@@ -85,6 +85,11 @@ fi
     };
   };
 
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
+
   programs.starship = {
     enable = true;
     settings = {
@@ -125,6 +130,8 @@ $all$character$directory
       gcc
       # nix
       nil
+      # nim
+      nimlangserver
       # lua
       lua-language-server
       stylua
