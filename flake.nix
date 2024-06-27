@@ -113,6 +113,11 @@
             modules = [ ./home/hosts/Oboro.nix ];
             extraSpecialArgs = specialArgs;
           };
+          default = home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [ ./home/hosts/localhost.nix ];
+            extraSpecialArgs = specialArgs;
+          };
         };
       };
 }
