@@ -11,18 +11,23 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager = {
-      url = "github:nix-community/home-manager";
+    nix-on-droid = {
+      url = "github:nix-community/nix-on-droid/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nixos-hardware, nix-darwin, home-manager }:
+  outputs = inputs@{ self, nixpkgs, nixos-hardware, nix-darwin, nix-on-droid, home-manager }:
     let
       username = builtins.getEnv "USER";
       useremail = "glassesneo@protonmail.com";
@@ -68,6 +73,25 @@
         ];
       };
 
+      commonNixOnDroidConfigurations = {
+        system = "aarch64";
+        modules = [
+          ./system/android/configuration.nix
+          { nix.registry.nixpkgs.flake = nixpkgs; }
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = specialArgs;
+              verbose = true;
+              config = ./home/hosts/localhost.nix;
+            };
+          }
+        ];
+        extraSpecialArgs = specialArgs;
+        home-manager-path = home-manager.outPath;
+      };
+
     in
       {
         nixosConfigurations = {
@@ -75,6 +99,9 @@
         };
         darwinConfigurations = {
           "Oboro" = nix-darwin.lib.darwinSystem commonDarwinConfigurations;
+        };
+        nixOnDroidConfigurations = {
+          default = nix-on-droid.lib.nixOnDroidConfiguration commonNixOnDroidConfigurations;
         };
         homeConfigurations = {
           "${username}@Narukami" = home-manager.lib.homeManagerConfiguration {
