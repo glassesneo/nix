@@ -114,7 +114,9 @@
             extraSpecialArgs = specialArgs;
           };
           "nix-on-droid" = home-manager.lib.homeManagerConfiguration {
-            pkgs = nixpkgs.legacyPackages."aarch64";
+            pkgs = import nixpkgs {
+              system = "aarch-64";
+            };
             modules = [ ./home/hosts/localhost.nix ];
             extraSpecialArgs = specialArgs;
           };
