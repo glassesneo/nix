@@ -115,7 +115,7 @@
           };
           "nix-on-droid" = home-manager.lib.homeManagerConfiguration {
             pkgs = import nixpkgs {
-              system = "aarch-64";
+              system = "aarch64";
             };
             modules = [ ./home/hosts/localhost.nix ];
             extraSpecialArgs = specialArgs;
