@@ -83,7 +83,6 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               extraSpecialArgs = specialArgs;
-              verbose = true;
               config = ./home/hosts/localhost.nix;
             };
           }
