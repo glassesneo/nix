@@ -5,6 +5,8 @@
   ];
   home = {
     packages = with pkgs; [
+      openssh
+      iproute2
       xsel
     ];
     shellAliases = {
