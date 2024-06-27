@@ -8,12 +8,14 @@
     fd
     duf
     deno
+    gitflow
   ];
 
   programs.git = {
     enable = true;
     userName = "glassesneo";
     userEmail = "glassesneo@protonmail.com";
+    delta.enable = true;
     extraConfig = {
       commit = {
         template = "${config.xdg.configHome}/git/.gitmsg";
