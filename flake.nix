@@ -113,8 +113,8 @@
             modules = [ ./home/hosts/Oboro.nix ];
             extraSpecialArgs = specialArgs;
           };
-          default = home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
+          "nix-on-droid" = home-manager.lib.homeManagerConfiguration {
+            pkgs = nixpkgs.legacyPackages."aarch64";
             modules = [ ./home/hosts/localhost.nix ];
             extraSpecialArgs = specialArgs;
           };
