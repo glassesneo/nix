@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 {
   home.packages = with pkgs; [
+    devbox
     sl
     nixpkgs-fmt
     bat
@@ -89,7 +90,6 @@ fi
 
   programs.direnv = {
     enable = true;
-    nix-direnv.enable = true;
   };
 
   programs.starship = {
