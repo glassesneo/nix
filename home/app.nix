@@ -99,9 +99,10 @@ fi
       "$schema" = "https://starship.rs/config-schema.json";
       scan_timeout = 10;
       format = ''
-$all$character$directory
+[┌|](bold green)$all$character$directory
+[└────>](bold green) 
 '';
-      add_newline = false;
+      add_newline = true;
       character = {
         error_symbol = "[:\\(](bold red)";
         success_symbol = "[:D](bold green)";
