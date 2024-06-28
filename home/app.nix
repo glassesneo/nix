@@ -32,6 +32,7 @@
       "*~"
       "*.swp"
       ".DS_Store"
+      ".direnv"
     ];
   };
 
