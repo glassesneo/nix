@@ -132,8 +132,6 @@ $all$character$directory
       gcc
       # nix
       nil
-      # nim
-      nimlangserver
       # lua
       lua-language-server
       stylua
