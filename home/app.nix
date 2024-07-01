@@ -33,6 +33,7 @@
       "*.swp"
       ".DS_Store"
       ".direnv"
+      ".envrc"
     ];
   };
 
