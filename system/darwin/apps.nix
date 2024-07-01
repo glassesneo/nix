@@ -36,6 +36,7 @@
 
     # `brew install`
     brews = [
+      "mas"
     ];
 
     # `brew install --cask`
@@ -48,5 +49,10 @@
       "discord"
       "hot"
     ];
+
+    masApps = {
+      XCode = 497799835;
+      LINE = 539883307;
+    };
   };
 }
