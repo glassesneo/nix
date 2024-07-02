@@ -17,6 +17,7 @@
       ls = "eza";
       bd = "cd ..";
       tree = "eza --tree";
+      projectroot = "git rev-parse --show-toplevel";
     };
   };
 
