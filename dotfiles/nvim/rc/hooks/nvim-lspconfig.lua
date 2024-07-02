@@ -72,6 +72,10 @@ lspconfig.typst_lsp.setup({
   capabilities = capabilities,
 })
 
+lspconfig.v_analyzer.setup({
+  capabilities = capabilities,
+})
+
 local lsp_signature = require("lsp_signature")
 
 lsp_signature.setup({
