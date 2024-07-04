@@ -52,6 +52,15 @@
     enableCompletion = true;
     syntaxHighlighting.enable = true;
     autosuggestion.enable = true;
+    autocd = true;
+    shellAliases = {
+      ls = "eza";
+      bd = "cd ..";
+      tree = "eza --tree";
+    };
+    shellGlobalAliases = {
+      projectroot = "git rev-parse --show-toplevel";
+    };
     initExtra = ''
 # 組み込みコマンドを使うためのpath
 PATH=/bin:/usr/bin:/usr/local/bin:$PATH
@@ -129,6 +138,8 @@ fi
     enable = true;
     extraLuaConfig = builtins.readFile ../dotfiles/nvim/init.lua;
     extraPackages = with pkgs; [
+      # tree-sitter
+      tree-sitter
       # denops
       deno
       # tree-sitter

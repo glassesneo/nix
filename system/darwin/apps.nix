@@ -48,6 +48,7 @@
       "karabiner-elements"
       "discord"
       "hot"
+      "keycastr"
     ];
 
     masApps = {
