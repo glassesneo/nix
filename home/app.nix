@@ -37,6 +37,20 @@
     ];
   };
 
+  programs.git-cliff = {
+    enable = true;
+    settings = {
+      header = ''
+        # Change Log
+        All notable changes to this project will be documented in this file.
+
+        The format is based on [Keep a Changelog](http://keepachangelog.com/)
+        and this project adheres to [Semantic Versioning](http://semver.org/).
+      '';
+      tag_pattern = "[0-9]*";
+    };
+  };
+
   programs.gh = {
     enable = true;
     extensions = with pkgs; [ gh-markdown-preview ];
@@ -59,39 +73,31 @@
       tree = "eza --tree";
     };
     shellGlobalAliases = {
-      projectroot = "git rev-parse --show-toplevel";
+      projectroot = "`git rev-parse --show-toplevel`";
     };
     initExtra = ''
-# 組み込みコマンドを使うためのpath
-PATH=/bin:/usr/bin:/usr/local/bin:$PATH
+      # 組み込みコマンドを使うためのpath
+      PATH=/bin:/usr/bin:/usr/local/bin:$PATH
 
-# nix
-export PATH=/nix/var/nix/profiles/default/bin:~/.nix-profile/bin:$PATH
+      # nix
+      export PATH=/nix/var/nix/profiles/default/bin:~/.nix-profile/bin:$PATH
 
-# zsh-completions 設定
-if [ -e /usr/local/share/zsh-completions ]; then
-    fpath=(/usr/local/share/zsh-completions $fpath)
-fi
+      setopt +o nomatch
 
-# prompt
-PROMPT='%F{yellow}%n:%m%f %F{cyan}%c%f %F{red}|>%f '
-
-setopt +o nomatch
-
-eval "$(starship init zsh)"
-'';
+      eval "$(starship init zsh)"
+    '';
     envExtra = ''
-export XDG_DATA_HOME=$HOME/.local/share/
-export XDG_CONFIG_HOME=$HOME/.config/
-export XDG_STATE_HOME=$HOME/.local/state/
-export XDG_CACHE_HOME=$HOME/.cache/
+      export XDG_DATA_HOME=$HOME/.local/share/
+      export XDG_CONFIG_HOME=$HOME/.config/
+      export XDG_STATE_HOME=$HOME/.local/state/
+      export XDG_CACHE_HOME=$HOME/.cache/
 
-export NIX_PATH=$HOME/.nix-defexpr/channels
+      export NIX_PATH=$HOME/.nix-defexpr/channels
 
-if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-  . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-fi
-'';
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
+    '';
     history = {
       extended = true;
       size = 10000;
@@ -109,9 +115,9 @@ fi
       "$schema" = "https://starship.rs/config-schema.json";
       scan_timeout = 10;
       format = ''
-[┌|](bold green)$all$character$directory
-[└────>](bold green) 
-'';
+        [┌|](bold green)$all$character$directory
+        [└────>](bold green) 
+      '';
       add_newline = true;
       character = {
         error_symbol = "[:\\(](bold red)";
@@ -152,6 +158,9 @@ fi
       # toml
       taplo
     ];
+    withNodeJs = false;
+    withPython3 = false;
+    withRuby = false;
   };
 
   programs.eza = {
