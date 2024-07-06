@@ -22,9 +22,12 @@
     defaults = {
       smb.NetBIOSName = hostname;
 
-      menuExtraClock.Show24Hour = true;  # show 24 hour clock
       dock = {
         autohide = true;
+        autohide-delay = 0.24;
+        autohide-time-modifier = 0.8;
+        mouse-over-hilite-stack = true;
+        orientation = "bottom";
         show-recents = false;
       };
       finder = {
@@ -35,10 +38,21 @@
         ShowPathbar = true;  # show path bar
         ShowStatusBar = true;  # show status bar
       };
+      menuExtraClock = {
+        IsAnalog = false;
+        Show24Hour = true;
+        ShowDate = 1;
+        ShowDayOfMonth = true;
+        ShowDayOfWeek = true;
+        ShowSeconds = false;
+      };
       trackpad = {
+        ActuationStrength = 1;
         Clicking = false;
+        Dragging = false;
         TrackpadRightClick = false;
         TrackpadThreeFingerDrag = false;
+        TrackpadThreeFingerTapGesture = 0;
       };
       NSGlobalDomain = {
         # `defaults read NSGlobalDomain "xxx"`
@@ -100,7 +114,7 @@
         };
         "com.apple.screencapture" = {
           location = "~/Desktop";
-          type = "png";
+          type = "jpg";
         };
         "com.apple.AdLib" = {
           allowApplePersonalizedAdvertising = false;
@@ -113,6 +127,11 @@
         SHOWFULLNAME = true;  # show full name in login window
       };
     };
+    keyboard = {
+      enableKeyMapping = true;
+      remapCapsLockToControl = true;
+    };
+    startup.chime = false;
   };
 
   # Add ability to use TouchID for sudo authentication
