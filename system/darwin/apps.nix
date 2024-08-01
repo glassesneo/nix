@@ -49,6 +49,7 @@
       "discord"
       "hot"
       "keycastr"
+      "monitorcontrol"
     ];
 
     masApps = {

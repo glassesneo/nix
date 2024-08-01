@@ -32,4 +32,4 @@ vim.opt.smartindent = true
 vim.opt.clipboard = "unnamed"
 vim.opt.completeopt = { "menuone", "noinsert" }
 vim.opt.wildmenu = true
-vim.opt.autochdir = true
+-- vim.opt.autochdir = true

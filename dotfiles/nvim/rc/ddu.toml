@@ -1,91 +1,83 @@
 [[plugins]]
 repo = 'Shougo/ddu.vim'
 depends = 'denops.vim'
-# on_source = 'denops.vim'
 hooks_file = '$BASE_DIR/hooks/ddu.lua'
 
 
 [[plugins]]
 repo = 'Shougo/ddu-commands.vim'
 depends = 'ddu.vim'
-# on_cmd = 'Ddu'
 
 
 # source
 
 [[plugins]]
 repo = 'Shougo/ddu-source-file_rec'
-# on_source = 'ddu.vim'
 
 
 [[plugins]]
 repo = 'Shougo/ddu-source-file'
-# on_source = 'ddu.vim'
-
-
-[[plugins]]
-repo = '4513ECHO/ddu-source-colorscheme'
-# on_source = 'ddu.vim'
 
 
 [[plugins]]
 repo = 'Shougo/ddu-source-action'
-# on_source = 'ddu.vim'
 
 
 [[plugins]]
 repo = 'kamecha/ddu-source-window'
-# on_source = 'ddu.vim'
+
+
+[[plugins]]
+repo = 'tennashi/ddu-source-git'
+
+
+[[plugins]]
+repo = '4513ECHO/ddu-source-source'
 
 
 # filter
 
 [[plugins]]
 repo = 'Shougo/ddu-filter-matcher_substring'
-# on_source = 'ddu.vim'
 
 
 [[plugins]]
 repo = 'Shougo/ddu-filter-sorter_alpha'
-# on_source = 'ddu.vim'
 
 
 [[plugins]]
 repo = 'Shougo/ddu-filter-sorter_reversed'
-# on_source = 'ddu.vim'
 
 
 [[plugins]]
 repo = 'uga-rosa/ddu-filter-converter_devicon'
-# on_source = 'ddu.vim'
+
+
+[[plugins]]
+repo = 'staticWagomU/ddu-filter-matcher_specific_items'
 
 
 # kind
 
 [[plugins]]
 repo = 'Shougo/ddu-kind-file'
-# on_source = 'ddu.vim'
 
 
 # ui
 
 [[plugins]]
 repo = 'Shougo/ddu-ui-ff'
-# on_source = 'ddu.vim'
 
 
 [[plugins]]
 repo = 'Shougo/ddu-ui-filer'
-# on_source = 'ddu.vim'
 
 
 # column
 
 [[plugins]]
 repo = 'Shougo/ddu-column-filename'
-# on_source = 'ddu.vim'
 
 
 [[plugins]]
 repo = 'kamecha/ddu-column-custom'
-# on_source = 'ddu.vim'

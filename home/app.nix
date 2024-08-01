@@ -40,14 +40,32 @@
   programs.git-cliff = {
     enable = true;
     settings = {
-      header = ''
-        # Change Log
-        All notable changes to this project will be documented in this file.
-
-        The format is based on [Keep a Changelog](http://keepachangelog.com/)
-        and this project adheres to [Semantic Versioning](http://semver.org/).
-      '';
-      tag_pattern = "[0-9]*";
+      changelog = {
+        header = ''
+          # Change Log
+          All notable changes to this project will be documented in this file.
+        '';
+      };
+      git = {
+        conventional_commits = true;
+        filter_unconventional = true;
+        commit_parsers = [
+          { message = "^feat"; group = "Features";}
+          { message = "^fix"; group = "Bug Fixes";}
+          { message = "^doc"; group = "Documentation";}
+          { message = "^perf"; group = "Performance";}
+          { message = "^refactor"; group = "Refactor";}
+          { message = "^style"; group = "Styling";}
+          { message = "^test"; group = "Testing";}
+        ];
+        tag_pattern = "[0-9].*";
+        commit_preprocessors = [
+          {
+            pattern = "[🎉 ✨ 🐛 ♼ ⚡️ 🔥 💥 💬 🎨 ⚰️ ✏️ 🔒 🦺 ✅ 💡 📝 🛠️ 📄 🔖 ]\\s+";
+            replace = "";
+          }
+        ];
+      };
     };
   };
 
@@ -144,6 +162,8 @@
     enable = true;
     extraLuaConfig = builtins.readFile ../dotfiles/nvim/init.lua;
     extraPackages = with pkgs; [
+      # lsp
+      efm-langserver
       # tree-sitter
       tree-sitter
       # denops
@@ -157,6 +177,8 @@
       stylua
       # toml
       taplo
+      # markdown
+      marksman
     ];
     withNodeJs = false;
     withPython3 = false;

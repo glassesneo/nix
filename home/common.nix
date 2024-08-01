@@ -22,17 +22,25 @@
       target = "${config.xdg.configHome}/git/.gitmsg";
       text = ''
 # ==== Emojis ====
-# 🎉  :tada: Initial Commit
-# ✨  :sparkles: New Feature
-# 🐛  :bug: Bugfix
+# 🎉 :tada: A new project
+# ✨ :sparkles: New features
+# 🐛 :bug: Bugfix
 # ♼  :recycle: Refactor
-# 👕 :shirt: Style
-# 📖  :books: Docs
-# ⚡️  :zap: Performance
-# ✅  :white_check_mark: Test
-# 🍰  :cake: Chore
-# 💥  :boom: Breaking Changes
-# 🔖  :bookmark: Release / Version Tag
+# ⚡️ :zap: Performance
+# 🔥 :fire: Remove code or files
+# 💥 :boom: Breaking Changes
+# 💬 :speech_balloon: Text
+# 🎨 :art: Style
+# ⚰️  :coffin: Remove dead code
+# ✏️ :pencil: Fix typos
+# 🔒 :lock: Fix security or privacy issues
+# 🦺 :safety_vest: Validation code
+# ✅ :white_check_mark: Test
+# 💡 :bulb: Comments
+# 📝 :memo: Docs
+# 🛠️ :wrench: Config
+# 📄 :page_facing_up: License
+# 🔖 :bookmark: Release / Version Tag
       '';
     };
     "nvim" = {

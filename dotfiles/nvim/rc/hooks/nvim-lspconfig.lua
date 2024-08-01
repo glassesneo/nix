@@ -7,13 +7,27 @@ lspconfig.nil_ls.setup({
   capabilities = capabilities,
 })
 
+lspconfig.marksman.setup({
+  capabilities = capabilities,
+})
+
 lspconfig.nim_langserver.setup({
   capabilities = capabilities,
-  -- settings = {
-  --   nim = {
-  --     nimsuggestPath = "~/.nimble/bin/custom_lang_server_build",
-  --   },
-  -- },
+})
+
+lspconfig.efm.setup({
+  capabilities = capabilities,
+  init_options = {
+    documentFormatting = true,
+    documentRangeFormatting = true,
+  },
+  settings = {
+    rootMarkers = {
+      ".git/",
+    },
+    languages = {},
+  },
+  filetypes = {},
 })
 
 lspconfig.denols.setup({
