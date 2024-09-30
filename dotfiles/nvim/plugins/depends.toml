@@ -1,0 +1,5 @@
+[[plugins]]
+repo = 'nvim-tree/nvim-web-devicons'
+
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'

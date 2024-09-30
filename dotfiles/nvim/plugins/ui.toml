@@ -1,0 +1,4 @@
+[[plugins]]
+repo = 'rcarriga/nvim-notify'
+on_event = 'VimEnter'
+hooks_file = "$HOOK_DIR/notify.lua"

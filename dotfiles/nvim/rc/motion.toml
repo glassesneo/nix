@@ -1,4 +1,0 @@
-[[plugins]]
-repo = 'yuttie/comfortable-motion.vim'
-on_map = { nx = ['<C-u>', '<C-d>', '<C-f>', '<C-b>'] }
-hooks_file = '$BASE_DIR/hooks/comfortable-motion.lua'

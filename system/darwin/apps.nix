@@ -42,14 +42,18 @@
     # `brew install --cask`
     casks = [
       "arc"
-      "warp"
-      "proton-drive"
-      "proton-pass"
-      "karabiner-elements"
+      "canva"
+      "chatgpt"
       "discord"
       "hot"
+      "karabiner-elements"
       "keycastr"
       "monitorcontrol"
+      "proton-drive"
+      "proton-pass"
+      "slack"
+      "warp"
+      "zoom"
     ];
 
     masApps = {

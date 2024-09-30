@@ -1,4 +1,0 @@
-[[plugins]]
-repo = 'tani/dmacro.nvim'
-on_map = { ni = '<C-m>' }
-hooks_file = '$BASE_DIR/hooks/dmacro.lua'

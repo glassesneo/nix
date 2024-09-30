@@ -1,0 +1,12 @@
+[[plugins]]
+repo = 'rhysd/clever-f.vim'
+on_map = ['f', 'F', 't', 'T']
+lua_add = '''
+  vim.g.clever_f_smart_case = 1
+  vim.g.clever_f_timeout_ms = 2000
+'''
+
+[[plugins]]
+repo = 'haya14busa/vim-edgemotion'
+on_map = '<Plug>(edgemotion-'
+hooks_file = '$HOOK_DIR/edgemotion.lua'

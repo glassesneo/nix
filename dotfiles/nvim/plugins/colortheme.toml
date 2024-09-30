@@ -1,0 +1,4 @@
+[[plugins]]
+repo = 'diegoulloao/neofusion.nvim'
+on_event = 'VimEnter'
+hooks_file = "$HOOK_DIR/neofusion.lua"

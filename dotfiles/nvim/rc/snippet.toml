@@ -1,6 +1,0 @@
-[[plugins]]
-repo = 'L3MON4D3/LuaSnip'
-rev = "v2.*"
-frozen = true
-build = 'make install_jsregexp'
-on_source = 'ddc.vim'

@@ -32,7 +32,10 @@
       username = builtins.getEnv "USER";
       useremail = "glassesneo@protonmail.com";
       system = builtins.currentSystem;
-      pkgs = nixpkgs.legacyPackages."${system}";
+      pkgs = import inputs.nixpkgs {
+        system = "${system}";
+        config.allowUnfree = true;
+      };
       specialArgs = inputs // {
         inherit username useremail;
       };

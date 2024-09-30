@@ -1,5 +1,0 @@
-[[plugins]]
-repo = 'stevearc/conform.nvim'
-on_event = ['BufRead', 'BufNewFile']
-on_cmd = 'ConformInfo'
-hooks_file = '$BASE_DIR/hooks/conform.lua'

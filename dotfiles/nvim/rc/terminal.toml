@@ -1,4 +1,0 @@
-[[plugins]]
-repo = 'Shougo/deol.nvim'
-on_map = { n = '<Leader>d' }
-hooks_file = '$BASE_DIR/hooks/deol.lua'

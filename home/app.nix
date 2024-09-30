@@ -10,6 +10,9 @@
     duf
     deno
     gitflow
+    ffmpeg
+    silicon
+    unrar
   ];
 
   programs.git = {
@@ -133,7 +136,8 @@
       "$schema" = "https://starship.rs/config-schema.json";
       scan_timeout = 10;
       format = ''
-        [┌|](bold green)$all$character$directory
+        [┌⦘](bold green)$all
+        [│](bold green)$character $directory
         [└────>](bold green) 
       '';
       add_newline = true;

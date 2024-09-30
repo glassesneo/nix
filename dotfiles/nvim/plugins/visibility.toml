@@ -1,0 +1,46 @@
+[[plugins]]
+repo = 'shellRaining/hlchunk.nvim'
+on_event = ['BufNewFile', 'BufRead']
+hooks_file = "$HOOK_DIR/hlchunk.lua"
+
+[[plugins]]
+repo = 'unblevable/quick-scope'
+on_event = ['BufNewFile', 'BufRead']
+hooks_file = "$HOOK_DIR/quick-scope.lua"
+
+[[plugins]]
+repo = 'MeanderingProgrammer/render-markdown.nvim'
+depends = ['nvim-treesitter', 'nvim-web-devicons']
+on_ft = 'markdown'
+lua_source = '''
+  require("render-markdown").setup({})
+'''
+
+[[plugins]]
+repo = 'atusy/tsnode-marker.nvim'
+depends = 'nvim-treesitter'
+on_ft = 'markdown'
+hooks_file = '$HOOK_DIR/tsnode-marker.lua'
+
+[[plugins]]
+repo = 'm-demare/hlargs.nvim'
+depends = ['nvim-treesitter']
+lua_source = '''
+  require("hlargs").setup({})
+'''
+
+[[plugins]]
+repo = 'chentoast/marks.nvim'
+on_event = ['BufNewFile', 'BufRead']
+lua_source = '''
+  require("marks").setup({
+    default_mappings = false
+  })
+'''
+# [[plugins]]
+# repo = 'mawkler/modicator.nvim'
+# depends = ['neofusion.nvim']
+# on_lua = ['lualine']
+# lua_source = '''
+#   require("modicator").setup({})
+# '''
