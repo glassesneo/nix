@@ -43,6 +43,7 @@ export class Config extends BaseConfig {
       { name: "editing.toml", lazy: true },
       { name: "formatter.toml", lazy: true },
       { name: "git.toml", lazy: true },
+      { name: "lang.toml", lazy: true },
       { name: "lsp.toml", lazy: true },
       { name: "motion.toml", lazy: true },
       { name: "snippet.toml", lazy: true },

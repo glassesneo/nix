@@ -1,0 +1,3 @@
+[[plugins]]
+repo = 'alaviss/nim.nvim'
+on_ft = ['nim', 'nims', 'nimble']

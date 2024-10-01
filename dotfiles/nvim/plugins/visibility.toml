@@ -16,12 +16,12 @@ lua_source = '''
   require("render-markdown").setup({})
 '''
 
-[[plugins]]
-repo = 'atusy/tsnode-marker.nvim'
-depends = 'nvim-treesitter'
-on_ft = 'markdown'
-hooks_file = '$HOOK_DIR/tsnode-marker.lua'
-
+# [[plugins]]
+# repo = 'atusy/tsnode-marker.nvim'
+# depends = 'nvim-treesitter'
+# on_ft = 'markdown'
+# hooks_file = '$HOOK_DIR/tsnode-marker.lua'
+#
 [[plugins]]
 repo = 'm-demare/hlargs.nvim'
 depends = ['nvim-treesitter']
@@ -37,6 +37,12 @@ lua_source = '''
     default_mappings = false
   })
 '''
+
+[[plugins]]
+repo = 'xiyaowong/transparent.nvim'
+lazy = false
+hooks_file = '$HOOK_DIR/transparent.lua'
+
 # [[plugins]]
 # repo = 'mawkler/modicator.nvim'
 # depends = ['neofusion.nvim']

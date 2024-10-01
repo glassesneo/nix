@@ -25,7 +25,7 @@ require("neofusion").setup({
     CursorColumn = { bg = neofusion_palette.dark_aqua },
   },
   dim_inactive = false,
-  transparent_mode = false,
+  transparent_mode = true,
 })
 
 vim.cmd([[ colorscheme neofusion ]])

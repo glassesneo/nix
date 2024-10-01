@@ -259,18 +259,25 @@ vim.fn["ddc#enable"]()
 
 -- pum.vim config
 vim.fn["pum#set_option"]({
+  blend = 30,
   border = "rounded",
   item_orders = { "abbr", "space", "kind", "space", "menu" },
   offset_cmdrow = 2,
   scrollbar_char = "┃",
+  use_setline = true,
+  max_columns = {
+    kind = 10,
+    menu = 30,
+  },
   -- preview = true,
   -- preview_border = "rounded",
   -- preview_delay = 100,
   -- preview_width = 30,
+  -- preview_height = 30,
 })
 
 vim.fn["pum#set_local_option"]("c", {
-  max_height = 10,
+  max_height = 90,
   preview = false,
 })
 
