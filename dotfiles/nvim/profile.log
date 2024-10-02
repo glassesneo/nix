@@ -1,0 +1,2256 @@
+FUNCTION  pum#popup#_close_id()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:448
+Called 16 times
+Total time:   0.005421
+ Self time:   0.001019
+
+count  total (s)   self (s)
+   16              0.000020   if a:id < 0
+                                return
+   16              0.000005   endif
+                            
+   16              0.000008   try
+                                " Move cursor
+   16              0.000080     call win_execute(a:id, 'call cursor(1, 0)')
+                            
+                                " NOTE: popup may be already closed
+                                " Close popup and clear highlights
+   16              0.000035     if has('nvim')
+   16   0.000377   0.000330       call nvim_buf_clear_namespace( a:id->winbufnr(), pum#_get().namespace, 1, -1)
+   16              0.000315       call nvim_win_close(a:id, v:true)
+                                else
+                                  " NOTE: prop_remove() is not needed.
+                                  " popup_close() removes the buffer.
+                                  call popup_close(a:id)
+   13              0.000004     endif
+    3              0.000015   catch /E523:\|E565:\|E5555:/
+                                " Ignore "Not allowed here"
+                            
+                                " Close the popup window later
+    3              0.000011     call timer_start(100, { -> pum#popup#_close_id(a:id) })
+   16              0.000011   endtry
+                            
+   16   0.004414   0.000059   call pum#popup#_redraw()
+
+FUNCTION  <SNR>78_line_to_file_full()
+    Defined: ~/.cache/dpp/repos/github.com/LumaKernel/ddc-source-file/autoload/ddc_file/internal.vim:1
+Called 27 times
+Total time:   0.000681
+ Self time:   0.000681
+
+count  total (s)   self (s)
+   27              0.000087   let separator = a:is_posix ? '/' : '\\'
+   27              0.000141   let pattern = printf('\c\%%(^\$\%%(env:\)\?\)\?[[:fname:]%s]*$', separator)
+   27              0.000422   return matchlist(a:line, pattern)[0]
+
+FUNCTION  pum#map#select_relative()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/map.vim:1
+Called 30 times
+Total time:   0.033272
+ Self time:   0.003179
+
+count  total (s)   self (s)
+   30   0.000273   0.000169   let pum = pum#_get()
+   30              0.000022   if pum.id <= 0
+                                return ''
+   30              0.000008   endif
+                            
+   30              0.000028   let delta = a:delta
+   30              0.000018   if pum.reversed
+                                let delta *= -1
+   30              0.000007   endif
+                            
+   30              0.000036   let pum.cursor += delta
+                            
+   30              0.000036   if pum.cursor > pum.len || pum.cursor <= 0
+                                " Overflow
+                            
+                                if a:overflow ==# 'empty' && (pum.cursor > pum.len || pum.cursor ==# 0)
+                                  " Select empty text
+                            
+                                  " Reset
+                                  let pum.cursor = 0
+                            
+                                  call pum#popup#_close_preview()
+                            
+                                  " Move real cursor
+                                  if pum.horizontal_menu
+                                    call pum#popup#_redraw_horizontal_menu()
+                                  else
+                                    call win_execute(pum.id, 'call cursor(1, 0)')
+                                    call pum#popup#_redraw_selected()
+                                  endif
+                            
+                                  " Reset scroll bar
+                                  if pum.scroll_id > 0 && has('nvim') && pum.scroll_id->winbufnr() > 0
+                                    call nvim_win_set_config(pum.scroll_id, #{   relative: 'editor',   row: pum.scroll_row,   col: pum.scroll_col, })
+                                    call win_execute(pum.scroll_id, 'call cursor(1, 0)')
+                                  endif
+                            
+                                  call pum#popup#_redraw_scroll()
+                            
+                                  call pum#popup#_reset_auto_confirm(mode())
+                            
+                                  return ''
+                                endif
+                            
+                                if a:overflow ==# 'ignore'
+                                  let pum.cursor = pum.cursor > pum.len ? pum.len : 1
+                                else
+                                  " Loop
+                                  let pum.cursor = pum.cursor > pum.len ? 1 : pum.len
+                                endif
+   30              0.000008   endif
+                            
+   30   0.001529   0.000191   call pum#_complete_changed()
+                            
+   30              0.000020   if pum.horizontal_menu
+                                call pum#popup#_redraw_horizontal_menu()
+   30              0.000010   else
+                                " Move real cursor
+                                " NOTE: If up scroll, cursor must adjust...
+   30              0.000021     if delta < 0
+                                  call win_execute(pum.id, 'call cursor(pum#_get().cursor, 0)')
+   30              0.000010     else
+   30   0.000344   0.000259       call win_execute(pum.id, 'call cursor(pum#_get().cursor + 1, 0)')
+   30              0.000010     endif
+   30   0.004006   0.000128     call pum#popup#_redraw_selected()
+                            
+   30   0.021751   0.000159     call pum#popup#_redraw_scroll()
+   30              0.000009   endif
+                            
+                              " Update scroll bar
+   30              0.000070   if pum.scroll_id > 0 && has('nvim') && pum.scroll_id->winbufnr() > 0
+    5              0.000009     const head = 'w0'->line(pum.id)
+    5              0.000005     const bottom = 'w$'->line(pum.id)
+    5              0.000017     const offset = head == 1 ? 0 : bottom == pum.len ? pum.height - pum.scroll_height : (pum.height * (head + 0.0) / pum.len + 0.5)->floor()->float2nr()
+                            
+    5              0.000032     call nvim_win_set_config(pum.scroll_id, #{   relative: 'editor',   row: pum.scroll_row + [offset, pum.scroll_height - 1]->min(),   col: pum.scroll_col, })
+   30              0.000009   endif
+                            
+                              " Close popup menu and CompleteDone if user input
+   30   0.001903   0.000230   call s:check_user_input({ -> pum#close() })
+                            
+   30   0.000164   0.000076   if mode() ==# 'i' && !pum#_options().commit_characters->empty()
+                                autocmd pum InsertCharPre * ++once ++nested call s:check_commit_characters()
+   30              0.000008   endif
+                            
+   30   0.001577   0.000245   call pum#popup#_reset_auto_confirm(mode())
+                            
+   30              0.000015   return ''
+
+FUNCTION  <SNR>34_Remove_Matches()
+    Defined: /nix/store/ijvkj8wfm3azp243f7zbzq4hxp0ahgxh-neovim-unwrapped-0.10.0/share/nvim/runtime/plugin/matchparen.vim:206
+Called 16 times
+Total time:   0.000107
+ Self time:   0.000107
+
+count  total (s)   self (s)
+   16              0.000027   if exists('w:paren_hl_on') && w:paren_hl_on
+                                while !empty(w:matchparen_ids)
+                                  silent! call remove(w:matchparen_ids, 0)->matchdelete()
+                                endwhile
+                                let w:paren_hl_on = 0
+   16              0.000004   endif
+
+FUNCTION  <SNR>80_check_textwidth()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/map.vim:523
+Called 5 times
+Total time:   0.000183
+ Self time:   0.000183
+
+count  total (s)   self (s)
+    5              0.000032   if mode() ==# 'i' && &l:formatoptions =~# '[tca]' && &l:textwidth > 0
+                                const pum = pum#_get()
+                                const startcol = pum.startcol - 1
+                                const prev_input = startcol == 0 ? '' : pum#_getline()[: startcol - 1]
+                                const word = pum.cursor > 0 ? pum.items[pum.cursor - 1].word : pum.orig_input
+                                if (prev_input .. word)->strdisplaywidth() >= &l:textwidth
+                                  return v:true
+                                endif
+    5              0.000003   endif
+                            
+    5              0.000014   return v:false
+
+FUNCTION  ddc#util#check_skip()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc/util.vim:48
+Called 25 times
+Total time:   0.000323
+ Self time:   0.000323
+
+count  total (s)   self (s)
+   25              0.000114   if a:pos < 0 || g:ddc#_changedtick != b:changedtick
+                                return v:true
+   25              0.000025   endif
+                            
+   25              0.000029   if g:ddc#_skip_next_complete > 0
+                                let g:ddc#_skip_next_complete -= 1
+                                return v:true
+   25              0.000008   endif
+                            
+   25              0.000025   return v:false
+
+FUNCTION  pum#_inc_skip_complete()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:297
+Called 5 times
+Total time:   0.000076
+ Self time:   0.000047
+
+count  total (s)   self (s)
+    5   0.000054   0.000025   let pum = pum#_get()
+    5              0.000010   let pum.skip_complete = v:true
+    5              0.000008   let pum.skip_count += 1
+
+FUNCTION  ddc#denops#_notify()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc/denops.vim:55
+Called 168 times
+Total time:   0.018247
+ Self time:   0.002654
+
+count  total (s)   self (s)
+  168   0.009506   0.000609   if ddc#denops#_running()
+  168   0.008105   0.001408     call denops#notify('ddc', a:method, a:args)
+                              else
+                                execute printf('autocmd User DenopsPluginPost:ddc call ' .. 'denops#notify("ddc", "%s", %s)', a:method, a:args->string())
+  168              0.000051   endif
+
+FUNCTION  denops#plugin#is_loaded()
+    Defined: ~/.cache/dpp/nvim/.dpp/autoload/denops/plugin.vim:1
+Called 335 times
+Total time:   0.006049
+ Self time:   0.003312
+
+count  total (s)   self (s)
+  335   0.005929   0.003193   return denops#_internal#plugin#get(a:name).state =~# '^\%(loaded\|failed\)$'
+
+FUNCTION  pum#popup#_redraw_scroll()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:488
+Called 30 times
+Total time:   0.021592
+ Self time:   0.021509
+
+count  total (s)   self (s)
+   30   0.000173   0.000090   const pum = pum#_get()
+                            
+                              " NOTE: normal redraw does not work...
+                              " And incsearch hack does not work in neovim.
+   30              0.019181   call win_execute(pum.id, has('nvim') ? 'redraw' : 'call pum#popup#_redraw()')
+   30              0.000116   if has('nvim') && &laststatus ==# 3
+   30              0.001959     redrawstatus
+   30              0.000016   endif
+                            
+   30              0.000051   if getcmdwintype() !=# ''
+                                " NOTE: redraw! is required for cmdwin
+                                redraw!
+   30              0.000009   endif
+
+FUNCTION  lexima#string#to_upper_specialkey()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/string.vim:12
+Called 4 times
+Total time:   0.000043
+ Self time:   0.000043
+
+count  total (s)   self (s)
+    4              0.000010   let str = substitute(a:str, ' ', '<SPACE>', 'g')
+    4              0.000029   let str = substitute(str, '\v\<\zs[A-Za-z\-]{-}\ze\>', '\=toupper(submatch(0))', 'g')
+    4              0.000002   return str
+
+FUNCTION  ddc_file#internal#info()
+    Defined: ~/.cache/dpp/repos/github.com/LumaKernel/ddc-source-file/autoload/ddc_file/internal.vim:23
+Called 27 times
+Total time:   0.004192
+ Self time:   0.002993
+
+count  total (s)   self (s)
+   27   0.001107   0.000426   let input_file_full = s:line_to_file_full(a:input_line, a:is_posix)
+   27   0.000738   0.000219   let input_file_base_prefix = s:full_to_base_prefix( input_file_full, a:chars, a:is_posix)
+   27              0.002234   let buf_path = expand('%:p')
+   27              0.000071   return [ input_file_full, input_file_base_prefix, buf_path, ]
+
+FUNCTION  <SNR>67_set_float_window_options()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:1168
+Called 13 times
+Total time:   0.000265
+ Self time:   0.000265
+
+count  total (s)   self (s)
+   13              0.000029   let highlight = 'NormalFloat:' .. a:options['highlight_' .. a:highlight]
+   13              0.000018   let highlight ..= ',FloatBorder:FloatBorder,CursorLine:Visual'
+   13              0.000011   if &hlsearch
+                                " Disable 'hlsearch' highlight
+   13              0.000015     let highlight ..= ',Search:None,CurSearch:None'
+   13              0.000004   endif
+                            
+   13              0.000091   call setwinvar(a:id, '&winhighlight', highlight)
+   13              0.000032   call setwinvar(a:id, '&winblend', a:options.blend)
+   13              0.000026   call setwinvar(a:id, '&wrap', v:false)
+   13              0.000024   call setwinvar(a:id, '&scrolloff', 0)
+
+FUNCTION  pum#popup#_redraw()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:478
+Called 16 times
+Total time:   0.004355
+ Self time:   0.004355
+
+count  total (s)   self (s)
+   16              0.000048   if mode() ==# 'c' && &incsearch && (getcmdtype() ==# '/' || getcmdtype() ==# '?')
+                                " Redraw without breaking 'incsearch' in search commands
+                                call feedkeys("\<C-r>\<BS>", 'n')
+   16              0.000006   else
+   16              0.004238     redraw
+   16              0.000012   endif
+
+FUNCTION  lexima#insmode#_default_posthook()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/insmode.vim:57
+Called 4 times
+Total time:   0.000003
+ Self time:   0.000003
+
+count  total (s)   self (s)
+    4              0.000002   return ''
+
+FUNCTION  ddc_file#internal#get_pos()
+    Defined: ~/.cache/dpp/repos/github.com/LumaKernel/ddc-source-file/autoload/ddc_file/internal.vim:35
+Called 32 times
+Total time:   0.000620
+ Self time:   0.000620
+
+count  total (s)   self (s)
+   32              0.000588   return match(a:input_line, printf('[%s]*$', a:chars))
+
+FUNCTION  pum#map#insert_relative()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/map.vim:104
+Called 5 times
+Total time:   0.010920
+ Self time:   0.000672
+
+count  total (s)   self (s)
+    5              0.000111   if mode() ==# 't'
+                                " It does not work well in terminal mode.
+                                return ''
+    5              0.000008   endif
+                            
+    5   0.000253   0.000070   if s:check_textwidth()
+                                " NOTE: If the input text is longer than 'textwidth', the completed text
+                                " will be the next line.  It breaks insert behavior.
+                                call pum#map#select_relative(a:delta, a:overflow)
+                                return
+    5              0.000003   endif
+                            
+    5   0.000113   0.000064   let pum = pum#_get()
+                            
+    5              0.000040   let prev_word = pum.cursor > 0 ? pum.items[pum.cursor - 1].word : pum.orig_input
+                            
+    5   0.006540   0.000060   call pum#map#select_relative(a:delta, a:overflow)
+                            
+    5              0.000011   if pum.cursor < 0 || pum.id <= 0
+                                let pum.current_word = ''
+                                return ''
+    5              0.000003   endif
+                            
+    5   0.003157   0.000058   call s:insert_current_word(prev_word, v:null)
+                            
+    5              0.000007   if pum.horizontal_menu
+                                call pum#popup#_redraw_horizontal_menu()
+    5              0.000003   endif
+                            
+                              " Close popup menu and CompleteDone if user input
+    5   0.000493   0.000056   call s:check_user_input({ -> pum#close() })
+                            
+    5              0.000006   return ''
+
+FUNCTION  <SNR>94_get_syntax_link_chain()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/insmode.vim:265
+Called 4 times
+Total time:   0.000078
+ Self time:   0.000078
+
+count  total (s)   self (s)
+    4              0.000006   let l = line('.')
+    4              0.000005   let c = col('.')
+    4              0.000011   let synname = synIDattr(synID(l, c, 1), "name")
+    4              0.000003   let result_stack = []
+    4              0.000004   if synname ==# '' && c > 1
+    4              0.000012     let synname = synIDattr(synID(l, c-1, 1), "name")
+    4              0.000001   endif
+    4              0.000003   while 1
+    4              0.000003     if synname ==# ''
+    4              0.000002       break
+                                endif
+                                call add(result_stack, synname)
+                                redir => hiresult
+                                  execute 'silent! highlight ' . synname
+                                redir END
+                                let synname = matchstr(hiresult, 'links to \zs\w\+')
+    4              0.000003   endwhile
+    4              0.000003   return result_stack
+
+FUNCTION  <SNR>94_find_rule()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/insmode.vim:206
+Called 4 times
+Total time:   0.000967
+ Self time:   0.000653
+
+count  total (s)   self (s)
+    4   0.000096   0.000018   let syntax_chain = s:get_syntax_link_chain()
+    4              0.000008   let searchlimit = max([0, line('.') - 20])
+    4   0.000253   0.000018   let rules = lexima#insmode#get_map_rules(a:char)
+   52              0.000023   for rule in rules
+   48              0.000214     let at_pos = searchpos(rule.at, 'bcWn', searchlimit)
+   48              0.000089     let excepted = has_key(rule, 'except') ?              searchpos(rule.except, 'bcWn', searchlimit) !=# [0, 0] : 0
+   48              0.000039     if at_pos !=# [0, 0] && !excepted
+                                  if empty(rule.syntax)
+                                    return [rule, at_pos]
+                                  else
+                                    for syn in syntax_chain
+                                      if index(rule.syntax, syn) >=# 0
+                                        return [rule, at_pos]
+                                      endif
+                                    endfor
+                                  endif
+   48              0.000010     endif
+   52              0.000014   endfor
+    4              0.000004   return [{}, [0, 0]]
+
+FUNCTION  <SNR>78_full_to_base_prefix()
+    Defined: ~/.cache/dpp/repos/github.com/LumaKernel/ddc-source-file/autoload/ddc_file/internal.vim:7
+Called 27 times
+Total time:   0.000519
+ Self time:   0.000519
+
+count  total (s)   self (s)
+   27              0.000040   let separator = a:is_posix ? '/' : '\'
+   27              0.000033   let separator2 = a:is_posix ? '/' : '\\'
+   27              0.000129   let pattern = printf('\%%(.*\%s\|^\)\(.*[^%s%s]\)[%s]*$', separator, a:chars, separator2, a:chars)
+   27              0.000286   return get(matchlist(a:full, pattern), 1, '')
+
+FUNCTION  quick_scope#HighlightLine()
+    Defined: ~/.cache/dpp/repos/github.com/unblevable/quick-scope/autoload/quick_scope.vim:21
+Called 1 time
+Total time:   0.000043
+ Self time:   0.000043
+
+count  total (s)   self (s)
+    1              0.000014   if g:qs_enable && (!exists('b:qs_local_disable') || !b:qs_local_disable) && index(get(g:, 'qs_buftype_blacklist', []), &buftype) < 0 && index(get(g:, 'qs_filetype_blacklist', []), &filetype) < 0
+    1              0.000005     let line = getline(line('.'))
+    1              0.000002     let len = strlen(line)
+    1              0.000002     let pos = col('.')
+                            
+    1              0.000002     if !empty(line) && len <= g:qs_max_chars
+                                  " Highlight after the cursor.
+                                  if a:direction != 0
+                                    let [patt_p, patt_s] = s:get_highlight_patterns(line, pos, len, a:targets)
+                                    call s:apply_highlight_patterns([patt_p, patt_s])
+                                  endif
+                            
+                                  " Highlight before the cursor.
+                                  if a:direction != 1
+                                    let [patt_p, patt_s] = s:get_highlight_patterns(line, pos, -1, a:targets)
+                                    call s:apply_highlight_patterns([patt_p, patt_s])
+                                  endif
+    1              0.000000     endif
+    1              0.000000   endif
+
+FUNCTION  pum#util#_truncate()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/util.vim:22
+Called 159 times
+Total time:   1.149239
+ Self time:   0.006041
+
+count  total (s)   self (s)
+  159              0.000494   const width = a:str->strwidth()
+  159              0.000091   if width <= a:max
+                                const ret = a:str
+  159              0.000037   else
+  159              0.000195     const header_width = a:max - a:separator->strwidth() - a:footer_width
+  159   1.144333   0.002724     const ret = s:strwidthpart(a:str, header_width) .. a:separator .. s:strwidthpart_reverse(a:str, a:footer_width)
+  159              0.000085   endif
+  159   0.003864   0.002274   return s:truncate(ret, a:max)
+
+FUNCTION  lexima#expand()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima.vim:151
+Called 4 times
+Total time:   0.000634
+ Self time:   0.000072
+
+count  total (s)   self (s)
+    4              0.000019   if a:mode ==# 'i'
+    4   0.000608   0.000046     return lexima#insmode#_expand(a:char)
+                              elseif a:mode ==# ':'
+                                return lexima#cmdmode#_expand(a:char)
+                              else
+                                throw 'lexima: Illegal `mode` parameter. (' . a:mode . ')'
+                              endif
+
+FUNCTION  pum#_col()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:314
+Called 89 times
+Total time:   0.000588
+ Self time:   0.000588
+
+count  total (s)   self (s)
+   89              0.000486   const col = mode() ==# 't' && !has('nvim') ? bufnr('%')->term_getcursor()[1] : mode() ==# 'c' ? getcmdpos() : mode() ==# 't' ? '.'->col() : '.'->col()
+   89              0.000056   return col
+
+FUNCTION  pum#_stop_debounce_timer()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:430
+Called 25 times
+Total time:   0.000163
+ Self time:   0.000163
+
+count  total (s)   self (s)
+   25              0.000039   if a:timer_name->exists()
+                                silent! call timer_stop({a:timer_name})
+                                unlet {a:timer_name}
+   25              0.000008   endif
+
+FUNCTION  ddc#util#get_input()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc/util.vim:16
+Called 84 times
+Total time:   0.003253
+ Self time:   0.002783
+
+count  total (s)   self (s)
+   84              0.000469   const mode = a:event ==# 'InsertEnter' ? 'i' : mode()
+   84              0.000237   const is_insert = (mode ==# 'i') || (mode ==# 't')
+   84   0.001095   0.000624   const text = mode->ddc#util#get_text()
+   84              0.000470   const col = mode() ==# 't' && !has('nvim') ? term_getcursor('%'->bufnr())[1] : mode() ==# 'c' ? getcmdpos() : col('.')
+   84              0.000217   const pos = mode ==# 'c' ? col - 1 : is_insert ? col - 1 : col
+   84              0.000471   const input = pos >= text->len() ?     text :     text->matchstr(         '^.*\%' .. (is_insert || col <= 0 ? col : col - 1)         .. 'c' .. (is_insert ? '' : '.'))
+                            
+   84              0.000077   return input
+
+FUNCTION  15()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/charstack.vim:44
+Called 2 times
+Total time:   0.000014
+ Self time:   0.000014
+
+count  total (s)   self (s)
+    2              0.000012   return empty(self.v)
+
+FUNCTION  <SNR>66_strwidthpart_reverse()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/util.vim:57
+Called 159 times
+Total time:   1.111895
+ Self time:   1.111895
+
+count  total (s)   self (s)
+  159              0.001529   const str = a:str->tr("\t", ' ')
+  159              0.000458   const vcol = str->strwidth() - a:width
+  159              1.109851   return str->matchstr('\%>' .. (vcol < 0 ? 0 : vcol) .. 'v.*')
+
+FUNCTION  denops#api#cmd()
+    Defined: ~/.cache/dpp/nvim/.dpp/autoload/denops/api.vim:5
+Called 124 times
+Total time:   0.001548
+ Self time:   0.001548
+
+count  total (s)   self (s)
+  124              0.000479   call extend(l:, a:context)
+  124              0.001023   call execute(a:cmd, '')
+
+FUNCTION  ddc#denops#_running()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc/denops.vim:49
+Called 333 times
+Total time:   0.017810
+ Self time:   0.007242
+
+count  total (s)   self (s)
+  333   0.017704   0.007136   return 'g:loaded_denops'->exists() && denops#server#status() ==# 'running' && denops#plugin#is_loaded('ddc')
+
+FUNCTION  <SNR>62_disable_cmdline_completion()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc.vim:21
+Called 2 times
+Total time:   0.001415
+ Self time:   0.000402
+
+count  total (s)   self (s)
+    2              0.000007   augroup ddc-cmdline
+    2              0.000232     autocmd!
+    2              0.000004   augroup END
+                            
+    2              0.000009   unlet! b:ddc_cmdline_completion
+                            
+    2              0.000070   if '#User#DDCCmdlineLeave'->exists()
+    2   0.001027   0.000013     doautocmd <nomodeline> User DDCCmdlineLeave
+    2              0.000004   endif
+
+FUNCTION  quick_scope#HighlightLineDelayCallback()
+    Defined: ~/.cache/dpp/repos/github.com/unblevable/quick-scope/autoload/quick_scope.vim:46
+Called 1 time
+Total time:   0.000080
+ Self time:   0.000018
+
+count  total (s)   self (s)
+    1   0.000028   0.000009   call quick_scope#UnhighlightLine()
+    1   0.000050   0.000008   call quick_scope#HighlightLine(a:direction, a:targets)
+
+FUNCTION  pum#_format_item()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:322
+Called 573 times
+Total time:   1.195919
+ Self time:   0.046680
+
+count  total (s)   self (s)
+  573              0.003685   const columns = a:item->get('columns', {})->copy() ->extend(#{   abbr: a:item->get('abbr', a:item.word),   kind: a:item->get('kind', ''),   menu: a:item->get('menu', ''), })
+                            
+  573              0.000317   let str = ''
+ 3406              0.002351   for [name, max_column] in a:max_columns
+ 2833              0.001433     if name ==# 'space'
+ 1130              0.000680       let str ..= ' '
+ 1130              0.000338       continue
+ 1703              0.000347     endif
+                            
+ 1703              0.000809     if name ==# 'abbr'
+  573              0.000388       let max_column = a:abbr_width
+ 1703              0.000348     endif
+                            
+ 1703              0.008841     let column = columns->get(name, '')->substitute('[[:cntrl:]]', '?', 'g')
+ 1703              0.001300     if name ==# 'abbr' && column ==# ''
+                                  " Fallback to "word"
+                                  let column = a:item.word
+ 1703              0.000380     endif
+                            
+ 1703              0.002215     if column->strdisplaywidth() > max_column
+                                  " Truncate
+  159   1.150827   0.001588       let column = column->pum#util#_truncate( max_column, max_column / 3, '...')
+ 1703              0.000347     endif
+ 1703              0.001704     if column->strdisplaywidth() < max_column
+                                  " Padding
+ 1420              0.002475       let column ..= ' '->repeat(max_column - column->strdisplaywidth())
+ 1703              0.000385     endif
+                            
+ 1703              0.001215     let str ..= column
+ 2276              0.001414   endfor
+                            
+  573              0.000317   if a:options.padding
+                                let str ..= ' '
+                            
+                                if a:mode ==# 'c' || a:startcol != 1
+                                  let str = ' ' .. str
+                                endif
+  573              0.000126   endif
+                            
+  573              0.000268   return str
+
+FUNCTION  lexima#insmode#get_map_rules()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/insmode.vim:29
+Called 4 times
+Total time:   0.000236
+ Self time:   0.000099
+
+count  total (s)   self (s)
+    4   0.000060   0.000017   let char = lexima#string#to_upper_specialkey(a:char)
+    4              0.000005   if has_key(s:map_dict, char)
+    4   0.000060   0.000047     if &filetype == '' || !s:L.has(keys(s:map_dict[char].rules), &filetype)
+    4   0.000108   0.000028       return s:map_dict[char].rules['_'].as_list()
+                                else
+                                  return s:map_dict[char].rules[&filetype].as_list() + s:map_dict[char].rules['_'].as_list()
+                                endif
+                              else
+                                return []
+                              endif
+
+FUNCTION  ddc#enable_cmdline_completion()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc.vim:5
+Called 2 times
+Total time:   0.000364
+ Self time:   0.000174
+
+count  total (s)   self (s)
+    2   0.000232   0.000042   call ddc#enable()
+                            
+    2              0.000007   augroup ddc-cmdline
+    2              0.000049     autocmd!
+    2              0.000016     autocmd CmdlineLeave * ++nested call ddc#hide('CmdlineLeave')
+    2              0.000010     autocmd CmdlineEnter * ++nested call ddc#on_event('CmdlineEnter')
+    2              0.000010     autocmd CmdlineChanged * ++nested : if getcmdtype() !=# '=' && getcmdtype() !=# '@' |   call ddc#on_event('CmdlineChanged') | endif
+    2              0.000014     autocmd ModeChanged c:n ++nested call s:disable_cmdline_completion()
+    2              0.000002   augroup END
+                            
+    2              0.000012   let b:ddc_cmdline_completion = v:true
+
+FUNCTION  19()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/sortedlist.vim:39
+Called 4 times
+Total time:   0.000081
+ Self time:   0.000081
+
+count  total (s)   self (s)
+    4              0.000079   return deepcopy(self.v)
+
+FUNCTION  ddc#util#get_next_input()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc/util.vim:33
+Called 42 times
+Total time:   0.002299
+ Self time:   0.000802
+
+count  total (s)   self (s)
+   42   0.000723   0.000452   const text = mode()->ddc#util#get_text()
+   42   0.001528   0.000303   return text[a:event->ddc#util#get_input()->len() :]
+
+FUNCTION  <SNR>67_highlight()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:605
+Called 575 times
+Total time:   0.017167
+ Self time:   0.008199
+
+count  total (s)   self (s)
+  575   0.002352   0.001176   let pum = pum#_get()
+                            
+  575              0.000287   let col = a:col
+  575   0.009858   0.002067   if pum#_options().padding && (mode() ==# 'c' || pum.startcol != 1)
+                                let col += 1
+  575              0.000105   endif
+                            
+  575              0.000464   if !a:highlight->hlexists()
+                                call pum#util#_print_error( printf('highlight "%s" does not exist', a:highlight))
+                                return
+  575              0.000112   endif
+                            
+  575              0.000572   if has('nvim')
+  575              0.001977     return nvim_buf_set_extmark( pum.buf, pum.namespace, a:row - 1, col - 1, #{   end_col: col - 1 + a:length,   hl_group: a:highlight,   priority: a:priority, })
+                              else
+                                " Add prop_type
+                                if a:prop_type->prop_type_get()->empty()
+                                  call prop_type_add(a:prop_type, #{   highlight: a:highlight,   priority: a:priority, })
+                                endif
+                                call prop_add(a:row, col, #{   length: a:length,   type: a:prop_type,   bufnr: pum.buf, })
+                                return -1
+                              endif
+
+FUNCTION  <SNR>67_uniq_by_word_or_dup()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:1182
+Called 25 times
+Total time:   0.002859
+ Self time:   0.002859
+
+count  total (s)   self (s)
+   25              0.000021   let ret = []
+   25              0.000018   let seen = {}
+  598              0.000245   for item in a:items
+  573              0.000350     let key = item.word
+  573              0.000659     if !seen->has_key(key) || item->get('dup', 0)
+  573              0.000541       let seen[key] = v:true
+  573              0.000464       call add(ret, item)
+  573              0.000128     endif
+  598              0.000203   endfor
+   25              0.000016   return ret
+
+FUNCTION  lexima#insmode#_expand()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/insmode.vim:106
+Called 4 times
+Total time:   0.000562
+ Self time:   0.000314
+
+count  total (s)   self (s)
+    4   0.000143   0.000032   let fallback = lexima#string#to_inputtable(a:char)
+    4              0.000021   if !has_key(s:map_dict, a:char) || mode() !=# 'i'
+                                return fallback
+    4              0.000004   endif
+    4              0.000021   let map = s:map_dict[a:char]
+    4   0.000212   0.000094   let prehook = lexima#string#to_inputtable( (type(map.prehook)) ==# type(function("tr")) ? call(map.prehook, [a:char]) : map.prehook )
+    4   0.000076   0.000058   let posthook = lexima#string#to_inputtable( (type(map.posthook)) ==# type(function("tr")) ? call(map.posthook, [a:char]) : map.posthook )
+    4              0.000069   return printf("%s\<C-r>=lexima#insmode#_map_impl(%s)\<CR>%s", prehook, string(a:char), posthook )
+
+FUNCTION  <SNR>67_get_border_size()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:522
+Called 25 times
+Total time:   0.000102
+ Self time:   0.000102
+
+count  total (s)   self (s)
+   25              0.000036   if a:border->type() == v:t_string
+   25              0.000053     return a:border ==# 'none' ? [0, 0, 0, 0] : [1, 1, 1, 1]
+                              elseif a:border->type() == v:t_list && !a:border->empty()
+                                return [   s:get_borderchar_width(a:border[3 % len(a:border)]),   s:get_borderchar_height(a:border[1 % len(a:border)]),   s:get_borderchar_width(a:border[7 % len(a:border)]),   s:get_borderchar_height(a:border[5 % len(a:border)]), ]
+                              else
+                                return [0, 0, 0, 0]
+                              endif
+
+FUNCTION  quick_scope#HighlightLineDelay()
+    Defined: ~/.cache/dpp/repos/github.com/unblevable/quick-scope/autoload/quick_scope.vim:53
+Called 1 time
+Total time:   0.000037
+ Self time:   0.000037
+
+count  total (s)   self (s)
+    1              0.000005   if g:qs_enable && g:qs_delay > 0
+    1              0.000005     call timer_stop(s:timer)
+    1              0.000011     let Cb = function('quick_scope#HighlightLineDelayCallback', [a:direction, a:targets])
+    1              0.000006     let s:timer = timer_start(g:qs_delay, Cb)
+                              else
+                                call quick_scope#UnhighlightLine()
+                                call quick_scope#HighlightLine(a:direction, a:targets)
+    1              0.000001   endif
+
+FUNCTION  denops#notify()
+    Defined: ~/.cache/dpp/nvim/.dpp/autoload/denops.vim:1
+Called 169 times
+Total time:   0.006754
+ Self time:   0.001429
+
+count  total (s)   self (s)
+  169   0.006676   0.001351   call denops#_internal#server#chan#notify( 'invoke', ['dispatch', [a:name, a:method, a:params]],)
+
+FUNCTION  <SNR>67_stop_auto_confirm()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:1131
+Called 66 times
+Total time:   0.000644
+ Self time:   0.000456
+
+count  total (s)   self (s)
+   66   0.000412   0.000225   let pum = pum#_get()
+   66              0.000057   if pum.auto_confirm_timer > 0
+                                call timer_stop(pum.auto_confirm_timer)
+                            
+                                let pum.auto_confirm_timer = -1
+   66              0.000016   endif
+
+FUNCTION  <SNR>66_truncate()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/util.vim:33
+Called 159 times
+Total time:   0.001590
+ Self time:   0.001590
+
+count  total (s)   self (s)
+                              " Original function is from mattn.
+                              " http://github.com/mattn/googlereader-vim/tree/master
+                            
+  159              0.000459   if a:str =~# '^[\x00-\x7f]*$'
+                                return a:str->len() < a:width ? printf('%-' .. a:width .. 's', a:str) : a:str->strpart(0, a:width)
+  159              0.000034   endif
+                            
+  159              0.000093   let ret = a:str
+  159              0.000152   let width = a:str->strwidth()
+  159              0.000075   if width > a:width
+                                let ret = s:strwidthpart(ret, a:width)
+                                let width = ret->strwidth()
+  159              0.000027   endif
+                            
+  159              0.000056   return ret
+
+FUNCTION  pum#popup#_redraw_selected()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:643
+Called 30 times
+Total time:   0.003879
+ Self time:   0.001221
+
+count  total (s)   self (s)
+   30   0.000221   0.000140   let pum = pum#_get()
+   30              0.000031   let prop_type = 'pum_highlight_selected'
+                            
+                              " Clear current highlight
+   30              0.000061   if has('nvim')
+   30              0.000149     call nvim_buf_del_extmark(pum.buf, pum.namespace, pum.selected_id)
+   30              0.000029     let pum.selected_id = -1
+                              elseif !prop_type->prop_type_get()->empty()
+                                call prop_remove(#{   type: prop_type,   bufnr: pum.buf, })
+   30              0.000008   endif
+                            
+   30              0.000031   if pum.cursor <= 0
+                                return
+   30              0.000009   endif
+   30              0.000106   let length = pum.buf->getbufline(pum.cursor)[0]->strlen()
+   30   0.000767   0.000174   let col = pum#_options().padding && (mode() ==# 'c' || pum.startcol != 1) ? 0 : 1
+   30   0.002302   0.000318   let pum.selected_id = s:highlight( pum#_options().highlight_selected, prop_type, s:priority_highlight_selected, pum.cursor, col, length)
+
+FUNCTION  ddc#on_complete_done()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc.vim:49
+Called 2 times
+Total time:   0.000020
+ Self time:   0.000020
+
+count  total (s)   self (s)
+    2              0.000014   if a:completed_item->empty() || !a:completed_item->has_key('user_data') || a:completed_item.user_data->type() != v:t_dict
+    2              0.000002     return
+                              endif
+                            
+                              call ddc#denops#_notify('onCompleteDone', [a:completed_item])
+
+FUNCTION  denops#_internal#server#chan#notify()
+    Defined: ~/.cache/dpp/nvim/.dpp/autoload/denops/_internal/server/chan.vim:89
+Called 169 times
+Total time:   0.005325
+ Self time:   0.002070
+
+count  total (s)   self (s)
+  169              0.000140   if g:denops#disabled
+                                return
+  169              0.000133   elseif s:chan is# v:null
+                                throw '[denops] Channel is not ready yet'
+  169              0.000047   endif
+  169   0.004723   0.001468   return s:rpcnotify(s:chan, a:method, a:params)
+
+FUNCTION  pum#_complete_changed()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:410
+Called 30 times
+Total time:   0.001338
+ Self time:   0.000555
+
+count  total (s)   self (s)
+   30   0.000917   0.000134   let options = pum#_options()
+                            
+   30              0.000019   if options.preview
+                                call pum#_stop_debounce_timer('s:debounce_preview_timer')
+                            
+                                " NOTE: In terminal mode, the timer does not work well.
+                                if mode() ==# 't'
+                                  call pum#popup#_preview()
+                                else
+                                  let s:debounce_preview_timer = timer_start( options.preview_delay, { -> pum#popup#_preview() })
+                                endif
+   30              0.000007   endif
+                            
+   30              0.000144   if '#User#PumCompleteChanged'->exists()
+                                doautocmd <nomodeline> User PumCompleteChanged
+   30              0.000008   endif
+
+FUNCTION  pum#_options()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:91
+Called 776 times
+Total time:   0.012208
+ Self time:   0.012208
+
+count  total (s)   self (s)
+  776              0.000671   if !'s:options'->exists()
+                                call pum#_init_options()
+  776              0.000159   endif
+                            
+  776              0.002736   let options = s:options->copy()
+                            
+  776              0.000577   const mode = mode()
+                            
+  776              0.001092   let local_options = s:local_options->get(mode, {})
+  776              0.000399   if mode ==# 'c'
+                                " Use getcmdtype()
+  391              0.001272     call extend(local_options, s:local_options->get(getcmdtype(), {}))
+  776              0.000179   endif
+  776              0.000669   if 'b:buffer_options'->exists()
+                                call extend(local_options, b:buffer_options)
+  776              0.000155   endif
+                            
+  776              0.001309   call extend(options, local_options)
+                            
+  776              0.000339   return options
+
+FUNCTION  pum#popup#_close()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:423
+Called 16 times
+Total time:   0.004949
+ Self time:   0.000387
+
+count  total (s)   self (s)
+   16              0.000012   if a:id <= 0
+    5              0.000003     return
+   11              0.000003   endif
+                            
+                              " Reset
+   11              0.000011   augroup pum
+   11              0.000085     autocmd!
+   11              0.000004   augroup END
+   11              0.000005   augroup pum-temp
+   11              0.000033     autocmd!
+   11              0.000003   augroup END
+                            
+   11   0.000054   0.000025   let pum = pum#_get()
+   11              0.000009   let pum.current_word = ''
+   11              0.000007   let pum.id = -1
+   11              0.000007   let pum.scroll_id = -1
+   11              0.000006   let pum.preview_id = -1
+   11              0.000006   let pum.cursor = -1
+                            
+   11              0.000029   let g:pum#completed_item = {}
+                            
+   11   0.004442   0.000036   call pum#popup#_close_id(a:id)
+   11   0.000199   0.000072   call s:stop_auto_confirm()
+
+FUNCTION  lexima#insmode#_default_prehook()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/insmode.vim:43
+Called 4 times
+Total time:   0.000099
+ Self time:   0.000061
+
+count  total (s)   self (s)
+                              " Add <C-]> prehook to expand abbreviation.
+    4   0.000077   0.000039   if lexima#string#to_inputtable(a:char) !~ '.*\k$' && (!g:lexima_disable_abbrev_trigger && !get(b:, 'lexima_disable_abbrev_trigger', 0))
+                                if pumvisible() && a:char == '<CR>'
+                                  return '<C-y><C-]>'
+                                else
+                                  return '<C-]>'
+                                endif
+    4              0.000001   else
+    4              0.000002     return ''
+                              endif
+
+FUNCTION  lexima#string#to_inputtable()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/string.vim:4
+Called 20 times
+Total time:   0.000236
+ Self time:   0.000236
+
+count  total (s)   self (s)
+   20              0.000225   return substitute(a:str, '<\([A-Za-z\-\]\[]\+\)>', '\=eval(''"\<'' . submatch(1) . ''>"'')', 'g')
+
+FUNCTION  pum#popup#_reset_auto_confirm()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:1106
+Called 55 times
+Total time:   0.002145
+ Self time:   0.000555
+
+count  total (s)   self (s)
+   55   0.000769   0.000252   call s:stop_auto_confirm()
+                            
+   55   0.001272   0.000199   let options = pum#_options()
+   55              0.000041   if options.auto_confirm_time <= 0
+   55              0.000022     return
+                              endif
+                            
+                              let pum = pum#_get()
+                            
+                              let pum.auto_confirm_timer = timer_start( options.auto_confirm_time, { -> s:auto_confirm() })
+                            
+                              " Reset the timer when user input texts
+                              if a:mode ==# 'i'
+                                autocmd pum TextChangedI,TextChangedP * ++once ++nested call pum#popup#_reset_auto_confirm(mode())
+                              elseif a:mode ==# 'c'
+                                autocmd pum CmdlineChanged * ++once ++nested call pum#popup#_reset_auto_confirm(mode())
+                              elseif a:mode ==# 't'
+                                autocmd pum TextChangedT * ++once ++nested call pum#popup#_reset_auto_confirm(mode())
+                              endif
+
+FUNCTION  pum#_row()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:308
+Called 59 times
+Total time:   0.000278
+ Self time:   0.000278
+
+count  total (s)   self (s)
+   59              0.000218   const row = mode() ==# 't' && !has('nvim') ? '%'->bufnr()->term_getcursor()[0] : '.'->line()
+   59              0.000036   return row
+
+FUNCTION  <SNR>100_setup_insmode()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/plugin/lexima.vim:15
+Called 1 time
+Total time:   0.000101
+ Self time:   0.000101
+
+count  total (s)   self (s)
+    1              0.000007   if get(b:, 'lexima_disabled', 0)
+                                return
+    1              0.000001   endif
+                            
+    1              0.000034   if !(match(&backspace, '\v%(start|nostop)') >=0 || &backspace =~# '\v^[23]$')
+                                echohl WarningMsg
+                                echom "lexima: 'backspace' option does not contain 'start' or 'nostop'. (Recommendation: set backspace=indent,eol,start)"
+                                echohl None
+    1              0.000001   endif
+                            
+                              " Setup workaround to be able to map `Esc` in insert mode, in combination with
+                              " the "nowait" mapping. This is required in terminal mode, where escape codes
+                              " are being used for cursor keys, alt/meta mappings etc.
+    1              0.000011   if g:lexima_map_escape == '<Esc>' && !has('gui_running')
+    1              0.000008     inoremap <Esc><Esc> <Esc>
+    1              0.000001   endif
+    1              0.000002   if g:lexima_map_escape !=# ''
+    1              0.000003     if v:version > 703 || (v:version == 703 && has("patch1261"))
+    1              0.000011       exe 'inoremap <silent> <buffer> <nowait> '.g:lexima_map_escape.' <C-r>=lexima#insmode#escape()<CR><Esc>'
+                                else
+                                  exe 'inoremap <silent> <buffer> '.g:lexima_map_escape.' <C-r>=lexima#insmode#escape()<CR><Esc>'
+    1              0.000000     endif
+    1              0.000000   endif
+
+FUNCTION  pum#close()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:182
+Called 41 times
+Total time:   0.007400
+ Self time:   0.001158
+
+count  total (s)   self (s)
+   41   0.000774   0.000148   if !pum#visible()
+   16              0.000009     return
+   25              0.000006   endif
+                            
+   25   0.000144   0.000078   let pum = pum#_get()
+   25              0.000017   if pum.id <= 0
+                                return
+   25              0.000006   endif
+                            
+   25   0.000331   0.000112   call pum#_reset_skip_complete()
+                            
+   25   0.000286   0.000123   call pum#_stop_debounce_timer('s:debounce_preview_timer')
+   25   0.000328   0.000106   call pum#popup#_close_preview()
+                            
+   25              0.000054   if pum.cursor >= 0 && pum.current_word !=# '' && pum.items->len() >= pum.cursor
+                                " Call the event later
+                                " NOTE: It may be failed when inside autocmd
+    1              0.000003     let completed_item = pum.items[pum.cursor - 1]
+    1              0.000009     call timer_start(1, { -> s:complete_done(completed_item, a:event) })
+   25              0.000006   endif
+                            
+   25              0.000094   if '#User#PumClose'->exists()
+                                doautocmd <nomodeline> User PumClose
+   25              0.000006   endif
+                            
+   25              0.000017   if a:close_window
+                                " NOTE: pum.scroll_id is broken after pum#popup#_close()
+    8              0.000011     const id = pum.id
+    8              0.000009     const scroll_id = pum.scroll_id
+                            
+    8   0.004714   0.000032     call pum#popup#_close(id)
+    8   0.000295   0.000028     call pum#popup#_close(scroll_id)
+   25              0.000006   endif
+
+FUNCTION  lexima#insmode#clear_stack()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/insmode.vim:469
+Called 1 time
+Total time:   0.000049
+ Self time:   0.000035
+
+count  total (s)   self (s)
+    1   0.000023   0.000014   if !s:pass_through_input_stack.is_empty()
+                                call s:pass_through_input_stack.pop_all()
+    1              0.000001   endif
+    1   0.000014   0.000008   if !s:lazy_input_stack.is_empty()
+                                call s:lazy_input_stack.pop_all()
+    1              0.000001   endif
+
+FUNCTION  pum#_reset_skip_complete()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:404
+Called 59 times
+Total time:   0.000737
+ Self time:   0.000513
+
+count  total (s)   self (s)
+   59   0.000564   0.000340   let pum = pum#_get()
+   59              0.000086   let pum.skip_complete = v:false
+   59              0.000048   let pum.skip_count = 0
+
+FUNCTION  denops#_internal#rpc#nvim#notify()
+    Defined: ~/.cache/dpp/nvim/.dpp/autoload/denops/_internal/rpc/nvim.vim:30
+Called 169 times
+Total time:   0.003255
+ Self time:   0.003255
+
+count  total (s)   self (s)
+  169              0.003183   return call('rpcnotify', [a:chan._id, a:method] + a:params)
+
+FUNCTION  quick_scope#UnhighlightLine()
+    Defined: ~/.cache/dpp/repos/github.com/unblevable/quick-scope/autoload/quick_scope.vim:70
+Called 2 times
+Total time:   0.000105
+ Self time:   0.000105
+
+count  total (s)   self (s)
+    2              0.000089   for m in filter(getmatches(), printf('v:val.group ==# "%s" || v:val.group ==# "%s"', g:qs_hi_group_primary, g:qs_hi_group_secondary))
+                                call matchdelete(m.id)
+    2              0.000004   endfor
+
+FUNCTION  lexima#insmode#_map_impl()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/lexima/insmode.vim:144
+Called 4 times
+Total time:   0.001130
+ Self time:   0.000110
+
+count  total (s)   self (s)
+    4   0.000072   0.000019   let fallback = lexima#string#to_inputtable(a:char)
+    4              0.000007   if g:lexima_disable_on_nofile && &buftype ==# 'nofile'
+                                return fallback
+    4              0.000001   endif
+    4              0.000006   if exists('b:lexima_disabled') && b:lexima_disabled
+                                return fallback
+    4              0.000001   endif
+    4   0.001027   0.000060   let [rule, at_start_pos] = s:find_rule(a:char)
+    4              0.000004   if rule == {}
+    4              0.000002     return fallback
+                              else
+                                let final_input = ''
+                                if has_key(rule, 'leave')
+                                  if type(rule.leave) ==# type('')
+                                    let final_input .= lexima#insmode#leave_till(rule.leave, lexima#string#to_mappable(a:char))
+                                  elseif type(rule.leave) ==# type(0)
+                                    let final_input .= lexima#insmode#leave(rule.leave, lexima#string#to_mappable(a:char))
+                                  else
+                                    throw 'lexima: Not applicable rule (' . string(rule) . ')'
+                                  endif
+                                endif
+                                if has_key(rule, 'delete')
+                                  if type(rule.delete) ==# type('')
+                                    let final_input .= lexima#insmode#delete_till(rule.delete, lexima#string#to_mappable(a:char))
+                                  elseif type(rule.delete) ==# type(0)
+                                    let final_input .= lexima#insmode#delete(rule.delete, lexima#string#to_mappable(repeat("\<Del>", rule.delete)))
+                                  else
+                                    throw 'lexima: Not applicable rule (' . string(rule) . ')'
+                                  endif
+                                endif
+                                if get(rule, 'with_submatch', 0)
+                                  let searchlimit = max([0, line('.') - 20])
+                                  let at_end_pos = searchpos(rule.at, 'bcWne', searchlimit)
+                                  if at_end_pos == [0, 0]
+                                    let at_end_pos = searchpos(rule.at, 'cWne', searchlimit)
+                                    if at_end_pos == [0, 0]
+                                      echoerr "Pattern not found. This is lexima's bug. Please report an issue with the following information."
+                                      echoerr rule
+                                    endif
+                                  endif
+                                  let context = join(getline(at_start_pos[0], at_end_pos[0]), "\n")[at_start_pos[1] - 1:at_end_pos[1]]
+                                  let pattern = substitute(rule.at, '\\%#', '', '')
+                                  let base_string = matchstr(context, pattern)
+                                  let input = substitute(base_string, pattern, rule.input, '')
+                                  let input_after = substitute(base_string, pattern, rule.input_after, '')
+                                else
+                                  let input = rule.input
+                                  let input_after = rule.input_after
+                                endif
+                                " Delay calling input_impl
+                                " so that 'delete' and 'leave' always perform BEFORE 'input'.
+                                " Tips: Unlike input_impl, calling 'delete' and 'leave' offen have no side effects,
+                                " these return just a string such as <Del>, <C-g>U<Right> unless multiline
+                                let final_input .= printf('<C-r>=lexima#insmode#_input_impl(%s, %s)<CR>', string(lexima#string#to_mappable(input)), string(lexima#string#to_mappable(input_after)) )
+                                return lexima#string#to_inputtable(final_input)
+                              endif
+
+FUNCTION  <SNR>34_Highlight_Matching_Pair()
+    Defined: /nix/store/ijvkj8wfm3azp243f7zbzq4hxp0ahgxh-neovim-unwrapped-0.10.0/share/nvim/runtime/plugin/matchparen.vim:44
+Called 16 times
+Total time:   0.000841
+ Self time:   0.000734
+
+count  total (s)   self (s)
+   16              0.000044   if !exists("w:matchparen_ids")
+                                let w:matchparen_ids = []
+   16              0.000007   endif
+                              " Remove any previous match.
+   16   0.000163   0.000056   call s:Remove_Matches()
+                            
+                              " Avoid that we remove the popup menu.
+                              " Return when there are no colors (looks like the cursor jumps).
+   16              0.000036   if pumvisible() || (&t_Co < 8 && !has("gui_running"))
+                                return
+   16              0.000004   endif
+                            
+                              " Get the character under the cursor and check if it's in 'matchpairs'.
+   16              0.000023   let c_lnum = line('.')
+   16              0.000018   let c_col = col('.')
+   16              0.000009   let before = 0
+                            
+   16              0.000022   let text = getline(c_lnum)
+   16              0.000115   let matches = matchlist(text, '\(.\)\=\%'.c_col.'c\(.\=\)')
+   16              0.000017   if empty(matches)
+                                let [c_before, c] = ['', '']
+   16              0.000006   else
+   16              0.000030     let [c_before, c] = matches[1:2]
+   16              0.000004   endif
+   16              0.000103   let plist = split(&matchpairs, '.\zs[:,]')
+   16              0.000022   let i = index(plist, c)
+   16              0.000009   if i < 0
+                                " not found, in Insert mode try character before the cursor
+   16              0.000028     if c_col > 1 && (mode() == 'i' || mode() == 'R')
+   14              0.000018       let before = strlen(c_before)
+   14              0.000009       let c = c_before
+   14              0.000014       let i = index(plist, c)
+   16              0.000005     endif
+   16              0.000007     if i < 0
+                                  " not found, nothing to do
+   16              0.000007       return
+                                endif
+                              endif
+                            
+                              " Figure out the arguments for searchpairpos().
+                              if i % 2 == 0
+                                let s_flags = 'nW'
+                                let c2 = plist[i + 1]
+                              else
+                                let s_flags = 'nbW'
+                                let c2 = c
+                                let c = plist[i - 1]
+                              endif
+                              if c == '['
+                                let c = '\['
+                                let c2 = '\]'
+                              endif
+                            
+                              " Find the match.  When it was just before the cursor move it there for a
+                              " moment.
+                              if before > 0
+                                let has_getcurpos = exists("*getcurpos")
+                                if has_getcurpos
+                                  " getcurpos() is more efficient but doesn't exist before 7.4.313.
+                                  let save_cursor = getcurpos()
+                                else
+                                  let save_cursor = winsaveview()
+                                endif
+                                call cursor(c_lnum, c_col - before)
+                              endif
+                            
+                              if !has("syntax") || !exists("g:syntax_on")
+                                let s_skip = "0"
+                              else
+                                " Build an expression that detects whether the current cursor position is
+                                " in certain syntax types (string, comment, etc.), for use as
+                                " searchpairpos()'s skip argument.
+                                " We match "escape" for special items, such as lispEscapeSpecial, and
+                                " match "symbol" for lispBarSymbol.
+                                let s_skip = 'synstack(".", col("."))' . '->indexof({_, id -> synIDattr(id, "name") =~? ' . '"string\\|character\\|singlequote\\|escape\\|symbol\\|comment"}) >= 0'
+                                " If executing the expression determines that the cursor is currently in
+                                " one of the syntax types, then we want searchpairpos() to find the pair
+                                " within those syntax types (i.e., not skip).  Otherwise, the cursor is
+                                " outside of the syntax types and s_skip should keep its value so we skip
+                                " any matching pair inside the syntax types.
+                                " Catch if this throws E363: pattern uses more memory than 'maxmempattern'.
+                                try
+                                  execute 'if ' . s_skip . ' | let s_skip = "0" | endif'
+                                catch /^Vim\%((\a\+)\)\=:E363/
+                                  " We won't find anything, so skip searching, should keep Vim responsive.
+                                  return
+                                endtry
+                              endif
+                            
+                              " Limit the search to lines visible in the window.
+                              let stoplinebottom = line('w$')
+                              let stoplinetop = line('w0')
+                              if i % 2 == 0
+                                let stopline = stoplinebottom
+                              else
+                                let stopline = stoplinetop
+                              endif
+                            
+                              " Limit the search time to 300 msec to avoid a hang on very long lines.
+                              " This fails when a timeout is not supported.
+                              if mode() == 'i' || mode() == 'R'
+                                let timeout = exists("b:matchparen_insert_timeout") ? b:matchparen_insert_timeout : g:matchparen_insert_timeout
+                              else
+                                let timeout = exists("b:matchparen_timeout") ? b:matchparen_timeout : g:matchparen_timeout
+                              endif
+                              try
+                                let [m_lnum, m_col] = searchpairpos(c, '', c2, s_flags, s_skip, stopline, timeout)
+                              catch /E118/
+                                " Can't use the timeout, restrict the stopline a bit more to avoid taking
+                                " a long time on closed folds and long lines.
+                                " The "viewable" variables give a range in which we can scroll while
+                                " keeping the cursor at the same position.
+                                " adjustedScrolloff accounts for very large numbers of scrolloff.
+                                let adjustedScrolloff = min([&scrolloff, (line('w$') - line('w0')) / 2])
+                                let bottom_viewable = min([line('$'), c_lnum + &lines - adjustedScrolloff - 2])
+                                let top_viewable = max([1, c_lnum-&lines+adjustedScrolloff + 2])
+                                " one of these stoplines will be adjusted below, but the current values are
+                                " minimal boundaries within the current window
+                                if i % 2 == 0
+                                  if has("byte_offset") && has("syntax_items") && &smc > 0
+                            	let stopbyte = min([line2byte("$"), line2byte(".") + col(".") + &smc * 2])
+                            	let stopline = min([bottom_viewable, byte2line(stopbyte)])
+                                  else
+                            	let stopline = min([bottom_viewable, c_lnum + 100])
+                                  endif
+                                  let stoplinebottom = stopline
+                                else
+                                  if has("byte_offset") && has("syntax_items") && &smc > 0
+                            	let stopbyte = max([1, line2byte(".") + col(".") - &smc * 2])
+                            	let stopline = max([top_viewable, byte2line(stopbyte)])
+                                  else
+                            	let stopline = max([top_viewable, c_lnum - 100])
+                                  endif
+                                  let stoplinetop = stopline
+                                endif
+                                let [m_lnum, m_col] = searchpairpos(c, '', c2, s_flags, s_skip, stopline)
+                              endtry
+                            
+                              if before > 0
+                                if has_getcurpos
+                                  call setpos('.', save_cursor)
+                                else
+                                  call winrestview(save_cursor)
+                                endif
+                              endif
+                            
+                              " If a match is found setup match highlighting.
+                              if m_lnum > 0 && m_lnum >= stoplinetop && m_lnum <= stoplinebottom 
+                                if s:has_matchaddpos
+                                  call add(w:matchparen_ids, matchaddpos('MatchParen', [[c_lnum, c_col - before], [m_lnum, m_col]], 10))
+                                else
+                                  exe '3match MatchParen /\(\%' . c_lnum . 'l\%' . (c_col - before) . 'c\)\|\(\%' . m_lnum . 'l\%' . m_col . 'c\)/'
+                                  call add(w:matchparen_ids, 3)
+                                endif
+                                let w:paren_hl_on = 1
+                              endif
+
+FUNCTION  <SNR>80_insert_current_word()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/map.vim:381
+Called 5 times
+Total time:   0.003100
+ Self time:   0.000130
+
+count  total (s)   self (s)
+    5   0.000074   0.000044   let pum = pum#_get()
+                            
+    5              0.000026   const word = pum.cursor > 0 ? pum.items[pum.cursor - 1].word : pum.orig_input
+    5   0.002993   0.000053   call s:insert(word, a:prev_word, a:after_func)
+
+FUNCTION  <SNR>65_to_bool()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:219
+Called 41 times
+Total time:   0.000090
+ Self time:   0.000090
+
+count  total (s)   self (s)
+   41              0.000072   return a:int_boolean_value ==# 1 ? v:true : v:false
+
+FUNCTION  denops#server#status()
+    Defined: ~/.cache/dpp/nvim/.dpp/autoload/denops/server.vim:140
+Called 333 times
+Total time:   0.004647
+ Self time:   0.003233
+
+count  total (s)   self (s)
+  333              0.000290   if s:closing
+                                return s:STATUS_CLOSING
+  333   0.003501   0.002088   elseif denops#_internal#server#chan#is_connected()
+  333              0.000436     return s:is_ready ? s:STATUS_RUNNING : s:STATUS_PREPARING
+                              elseif denops#_internal#server#proc#is_started()
+                                return s:is_closed ? s:STATUS_CLOSED : s:STATUS_STARTING
+                              elseif s:stopping
+                                return s:STATUS_CLOSED
+                              endif
+                              return s:STATUS_STOPPED
+
+FUNCTION  denops#api#eval()
+    Defined: ~/.cache/dpp/nvim/.dpp/autoload/denops/api.vim:10
+Called 488 times
+Total time:   0.013098
+ Self time:   0.012362
+
+count  total (s)   self (s)
+  488              0.004003   call extend(l:, a:context)
+  488   0.008662   0.007926   return eval(a:expr)
+
+FUNCTION  ddc#denops#_init()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc/denops.vim:1
+Called 2 times
+Total time:   0.000161
+ Self time:   0.000034
+
+count  total (s)   self (s)
+    2   0.000154   0.000026   if 'ddc'->denops#plugin#is_loaded()
+    2              0.000003     return
+                              endif
+                            
+                              if !has('patch-9.0.1276') && !has('nvim-0.8')
+                                call ddc#util#print_error( 'ddc requires Vim 9.0.1276+ or neovim 0.8.0+.')
+                                return
+                              endif
+                            
+                              augroup ddc
+                                autocmd!
+                                autocmd InsertLeave * ++nested call ddc#hide('InsertLeave')
+                              augroup END
+                            
+                              let context_filetype = a:opts->get('context_filetype', 'none')
+                              if context_filetype ==# 'context_filetype'
+                                " Force context_filetype call
+                                silent! call context_filetype#get_filetype()
+                              endif
+                            
+                              let g:ddc#_started = reltime()
+                              let g:ddc#_context_filetype = context_filetype
+                              let g:ddc#_skip_next_complete = 0
+                            
+                              " NOTE: ddc.vim must be registered manually.
+                            
+                              " NOTE: denops load may be started
+                              if 'g:loaded_denops'->exists()
+                                if denops#server#status() ==# 'running'
+                                  call s:register()
+                                  return
+                                endif
+                            
+                                try
+                                  if '<amatch>'->expand() ==# 'DenopsReady'
+                                    call s:register()
+                                    return
+                                  endif
+                                catch /^Vim\%((\a\+)\)\=:E497:/
+                                  " NOTE: E497 is occured when it is not in autocmd.
+                                endtry
+                              endif
+                            
+                              autocmd ddc User DenopsReady ++nested call s:register()
+
+FUNCTION  <SNR>80_check_user_input()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/map.vim:390
+Called 35 times
+Total time:   0.002110
+ Self time:   0.001788
+
+count  total (s)   self (s)
+   35              0.000048   augroup pum-temp
+   35              0.000304     autocmd!
+   35              0.000019   augroup END
+                            
+   35              0.000173   let g:PumCallback = function(a:callback)
+                            
+   35   0.000403   0.000248   let pum = pum#_get()
+   35   0.000393   0.000226   let pum.current_line = pum#_getline()[: pum.startcol]
+                            
+   35              0.000037   if mode() ==# 'c'
+   29              0.000163     autocmd pum-temp CmdlineLeave * ++once ++nested call pum#_reset_skip_complete()
+   29              0.000074     autocmd pum-temp CmdlineChanged * ++once ++nested call pum#popup#_check_text_changed()
+    6              0.000004   elseif mode() ==# 't'
+                                if '##KeyInputPre'->exists()
+                                  autocmd pum-temp KeyInputPre * ++nested call pum#popup#_check_text_changed()
+                                elseif has('nvim')
+                                  if !'s:check_user_input_handler'->exists()
+                                    lua vim.on_key(function(key)   if string.match(key, '^%C$') then     vim.fn['pum#close']()   end end)
+                                    const s:check_user_input_handler = v:true
+                                  endif
+                                else
+                                  autocmd pum-temp TextChangedT * ++nested call pum#popup#_check_text_changed()
+                                endif
+    6              0.000001   else
+    6              0.000024     autocmd pum-temp InsertLeave * ++once ++nested call pum#_reset_skip_complete()
+    6              0.000013     autocmd pum-temp TextChangedI * ++nested call pum#popup#_check_text_changed()
+    6              0.000009     autocmd pum-temp InsertCharPre * ++nested call pum#close()
+   35              0.000012   endif
+
+FUNCTION  pum#popup#_close_preview()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:1077
+Called 25 times
+Total time:   0.000221
+ Self time:   0.000155
+
+count  total (s)   self (s)
+   25   0.000171   0.000104   let pum = pum#_get()
+                            
+   25              0.000021   if pum.preview_id < 0
+   25              0.000010     return
+                              endif
+                            
+                              call pum#popup#_close_id(pum.preview_id)
+                            
+                              let pum.preview_id = -1
+
+FUNCTION  pum#popup#_check_text_changed()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:1149
+Called 39 times
+Total time:   0.002323
+ Self time:   0.001377
+
+count  total (s)   self (s)
+   39   0.001044   0.000450   const next_input = pum#_getline()[pum#_col():]
+                            
+   39              0.000080   if !'s:prev_next'->exists()
+                                let s:prev_next = next_input
+   39              0.000017   endif
+                            
+   39   0.000520   0.000341   let pum = pum#_get()
+   39              0.000041   if pum.skip_complete
+    5              0.000010     let s:prev_next = next_input
+    5              0.000004     return
+   34              0.000011   endif
+                            
+   34   0.000316   0.000143   if pum#_row() != pum.startrow || next_input !=# s:prev_next
+                                call pum#close()
+   34              0.000013   endif
+   34              0.000046   let s:prev_next = next_input
+
+FUNCTION  ddc#hide()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc.vim:90
+Called 3 times
+Total time:   0.000727
+ Self time:   0.000038
+
+count  total (s)   self (s)
+    3   0.000722   0.000033   call ddc#denops#_notify('hide', [a:event])
+
+FUNCTION  denops#_internal#plugin#get()
+    Defined: ~/.cache/dpp/nvim/.dpp/autoload/denops/_internal/plugin.vim:16
+Called 335 times
+Total time:   0.002736
+ Self time:   0.002736
+
+count  total (s)   self (s)
+  335              0.000596   if !has_key(s:plugins, a:name)
+                                if !denops#_internal#plugin#is_valid_name(a:name)
+                                  throw printf('[denops] Invalid plugin name: %s', a:name)
+                                endif
+                                let s:plugins[a:name] = #{name: a:name, script: '', state: s:STATE_RESERVED, callbacks: []}
+  335              0.000098   endif
+  335              0.000356   return s:plugins[a:name]
+
+FUNCTION  ddc#util#get_text()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc/util.vim:11
+Called 126 times
+Total time:   0.000742
+ Self time:   0.000742
+
+count  total (s)   self (s)
+  126              0.000644   return a:mode ==# 'c' ? getcmdline() : a:mode ==# 't' && !has('nvim') ? term_getline('', '.') : getline('.')
+
+FUNCTION  pum#visible()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:223
+Called 41 times
+Total time:   0.000625
+ Self time:   0.000370
+
+count  total (s)   self (s)
+   41   0.000608   0.000353   return (pum#_get().id > 0)->s:to_bool()
+
+FUNCTION  pum#popup#_open()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:6
+Called 25 times
+Total time:   1.333836
+ Self time:   0.020177
+
+count  total (s)   self (s)
+                              " NOTE: In neovim 0.10+, floating window works in command line window
+   25              0.000208   if a:mode !~# '[ict]' || (getcmdwintype() !=# '' && !has('nvim-0.10'))
+                                " Invalid mode
+                                return -1
+   25              0.000007   endif
+                            
+                              " Reset
+   25              0.000043   augroup pum
+   25              0.000370     autocmd!
+   25              0.000011   augroup END
+   25              0.000013   augroup pum-temp
+   25              0.000087     autocmd!
+   25              0.000008   augroup END
+                            
+   25   0.000893   0.000146   let options = pum#_options()
+                            
+                              " Remove dup
+   25   0.003119   0.000260   let items = s:uniq_by_word_or_dup(a:items)
+                            
+                              " Calc max columns
+   25              0.000023   let max_columns = []
+   25              0.000016   let width = 0
+   25              0.000022   let non_abbr_length = 0
+   25              0.000020   let prev_column_length = 0
+  150              0.000098   for column in options.item_orders
+  125   0.007182   0.004811     let max_column =   column ==# 'space' ? 1 :   column ==# 'abbr' ? items->copy()->map({ _, val ->     val->get('abbr', val.word)->strdisplaywidth()   })->max() :   column ==# 'kind' ? items->copy()->map({ _, val ->     val->get('kind', '')->strdisplaywidth()   })->max() :   column ==# 'menu' ? items->copy()->map({ _, val ->     val->get('menu', '')->strdisplaywidth()   })->max() :   items->copy()->map({ _, val ->     val->get('columns', {})->get(column, '')     ->strdisplaywidth()   })->max()
+                            
+  125              0.000310     let max_column = [max_column, options.max_columns->get(column, max_column)]->min()
+                            
+  125              0.000182     if max_column <= 0 || (column ==# 'space' && prev_column_length ==# 0)
+    8              0.000005       let prev_column_length = 0
+    8              0.000003       continue
+  117              0.000032     endif
+                            
+  117              0.000111     let width += max_column
+  117              0.000162     call add(max_columns, [column, max_column])
+                            
+  117              0.000073     if column !=# 'abbr'
+   92              0.000084       let non_abbr_length += max_column
+  117              0.000029     endif
+  117              0.000094     let prev_column_length = max_column
+  142              0.000069   endfor
+                            
+                              " Padding
+   25              0.000058   const padding = options.padding ? (a:mode ==# 'c' || a:startcol != 1) ? 2 : 1 : 0
+   25              0.000021   let width += padding
+   25              0.000021   if options.min_width > 0
+   25              0.000039     let width = [width, options.min_width]->max()
+   25              0.000008   endif
+   25              0.000015   if options.max_width > 0
+                                let width = [width, options.max_width]->min()
+   25              0.000007   endif
+                            
+                              " NOTE: abbr is the rest column
+   25              0.000043   const abbr_width = width - non_abbr_length - padding
+                            
+   25   1.199831   0.001218   let lines = items->copy() ->map({ _, val ->   pum#_format_item(     val, options, a:mode, a:startcol, max_columns, abbr_width   ) })
+                            
+   25   0.000153   0.000068   let pum = pum#_get()
+                            
+   25              0.000047   if !has('nvim') && a:mode ==# 't'
+                                const cursor = '%'->bufnr()->term_getcursor()
+                                let spos = #{   row: cursor[0],   col: options.follow_cursor ? cursor[1] : a:startcol, }
+   25              0.000010   else
+   25              0.000292     let spos = screenpos(   0, '.'->line(),   options.follow_cursor ? getcurpos()[2] : a:startcol, )
+   25              0.000008   endif
+                            
+   25   0.000288   0.000186   const [border_left, border_top, border_right, border_bottom] = s:get_border_size(options.border)
+   25              0.000040   let padding_height = 1 + border_top + border_bottom
+   25              0.000035   let padding_width = 1 + border_left + border_right
+   25              0.000023   let padding_left = border_left
+   25              0.000027   if options.padding && (a:mode ==# 'c' || a:startcol != 1)
+                                let padding_width += 2
+                                let padding_left += 1
+   25              0.000006   endif
+                            
+   25              0.000028   let height = items->len()
+   25              0.000017   if options.max_height > 0
+   19              0.000030     let height = [height, options.max_height]->min()
+   25              0.000006   endif
+   25              0.000014   if options.min_height > 0
+                                let height = [height, options.min_height]->max()
+   25              0.000005   endif
+                            
+   25              0.000017   if a:mode !=# 'c'
+                                " Adjust to screen row
+    6              0.000023     let minheight_below = [ height, &lines - spos.row - padding_height - options.offset_row ]->min()
+    6              0.000010     let minheight_above = [ height, spos.row - padding_height - options.offset_row ]->min()
+    6              0.000013     if (minheight_below < minheight_above && options.direction ==# 'auto') || (minheight_above >= 1 && options.direction ==# 'above')
+                                  " Use above window
+    3              0.000003       let spos.row -= height + padding_height
+    3              0.000002       let height = minheight_above
+    3              0.000002       const direction = 'above'
+    3              0.000001     else
+                                  " Use below window
+    3              0.000003       let height = minheight_below
+    3              0.000003       const direction = 'below'
+    6              0.000002     endif
+   19              0.000006   else
+   19              0.000017     const direction = 'above'
+   19              0.000058     let height = [height, &lines - [&cmdheight, 1]->max()]->min()
+   25              0.000007   endif
+   25              0.000026   let height = [height, 1]->max()
+                            
+                              " Reversed
+   25              0.000038   const reversed = direction ==# 'above' && options.reversed
+   25              0.000012   if reversed
+                                let lines = lines->reverse()
+                                let items = items->reverse()
+   25              0.000005   endif
+                            
+                              " Adjust to screen col
+   25              0.000044   const rest_width = &columns - spos.col - padding_width
+   25              0.000018   if rest_width < width
+                                let spos.col -= width - rest_width
+   25              0.000006   endif
+                            
+                              " Adjust to padding
+   25              0.000028   let spos.col -= padding_left
+                            
+   25              0.000015   if spos.col <= 0
+                                let spos.col = 1
+   25              0.000006   endif
+                            
+   25              0.000145   let pos = a:mode ==# 'c' ? [&lines - height - [1, &cmdheight]->max() - options.offset_cmdrow,  options.follow_cursor ? getcmdpos() :  a:startcol - padding_left + options.offset_cmdcol] : [spos.row + (direction ==# 'above' ?              -options.offset_row : options.offset_row),  spos.col - 1]
+                            
+   25              0.000016   if a:mode ==# 'c'
+   19              0.000047     if '*cmdline#_get'->exists() && !cmdline#_get().pos->empty()
+                                  const [cmdline_left, cmdline_top, cmdline_right, cmdline_bottom] = s:get_border_size(cmdline#_options().border)
+                            
+                                  let cmdline_pos = cmdline#_get().pos->copy()
+                                  let cmdline_pos[0] += cmdline_top + cmdline_bottom
+                                  let cmdline_pos[1] += cmdline_left
+                            
+                                  let pos[0] = cmdline_pos[0]
+                                  let pos[0] += (direction ==# 'above' ?        -options.offset_row : options.offset_row)
+                            
+                                  let pos[1] += cmdline#_get().prompt->strlen() + cmdline_pos[1]
+   19   0.006848   0.000141     elseif has('nvim') && pum#util#_luacheck('noice')
+                                  " Use noice cursor
+                                  let noice_pos = luaeval( 'require("noice").api.get_cmdline_position()').screenpos
+                            
+                                  let noice_view = luaeval('require("noice.config").options.cmdline.view')
+                                  if noice_view !=# 'cmdline'
+                                    let pos[0] = noice_pos.row
+                                    let pos[0] += (direction ==# 'above' ?        -options.offset_row : options.offset_row)
+                                  endif
+                            
+                                  let pos[1] += noice_pos.col - 1
+   19              0.000007     else
+                                  " Use getcmdscreenpos() for adjustment
+   19              0.000058       let pos[1] += (getcmdscreenpos() - 1) - getcmdpos()
+   19              0.000007     endif
+   25              0.000007   endif
+                            
+   25              0.000017   if options.horizontal_menu
+                                let pum.horizontal_menu = v:true
+                                let pum.cursor = 0
+                                let pum.items = items->copy()
+                            
+                                call pum#popup#_redraw_horizontal_menu()
+   25              0.000036   elseif has('nvim')
+   25              0.000024     if pum.buf < 0
+                                  let pum.buf = nvim_create_buf(v:false, v:true)
+   25              0.000008     endif
+   25              0.000019     if pum.scroll_buf < 0
+                                  let pum.scroll_buf = nvim_create_buf(v:false, v:true)
+   25              0.000006     endif
+                            
+   25              0.000684     call nvim_buf_set_lines(pum.buf, 0, -1, v:true, lines)
+                            
+   25   0.001443   0.001286     let scroll_lines = lines->copy()->map({ _ -> options.scrollbar_char })
+   25              0.000184     call nvim_buf_set_lines(pum.scroll_buf, 0, -1, v:true, scroll_lines)
+                            
+   25              0.000129     let winopts = #{   border: options.border,   relative: 'editor',   width: width,   height: height,   row: pos[0],   col: pos[1],   anchor: 'NW',   style: 'minimal',   zindex: options.zindex, }
+                            
+                                " NOTE: scroll_height must be positive
+   25              0.000141     const scroll_height = [ (height * ((height + 0.0) / lines->len()) + 0.5 )->floor()->float2nr(), 1]->max()
+   25              0.000034     const scroll_row = pos[0] + border_top
+   25              0.000036     const scroll_col = pos[1] + width + border_right
+   25              0.000135     let scroll_winopts = #{   relative: 'editor',   width: options.scrollbar_char->strwidth(),   height: scroll_height,   row: scroll_row,   col: scroll_col,   anchor: 'NW',   style: 'minimal',   zindex: options.zindex + 1, }
+                            
+   25              0.000034     let pum.scroll_row = scroll_winopts.row
+   25              0.000021     let pum.scroll_col = scroll_winopts.col
+   25              0.000025     let pum.scroll_height = scroll_winopts.height
+                            
+   25              0.000018     if pum.id > 0
+   17   0.001369   0.000104       call pum#close('complete_done', v:false)
+                            
+   17              0.000019       if pos == pum.pos
+                                    " Resize window
+    7              0.000023         call nvim_win_set_width(pum.id, width)
+    7              0.000015         call nvim_win_set_height(pum.id, height)
+   10              0.000003       else
+                                    " Reuse window
+   10              0.000190         call nvim_win_set_config(pum.id, winopts)
+   17              0.000006       endif
+    8              0.000003     else
+    8   0.000195   0.000028       call pum#close()
+                            
+                                  " NOTE: It cannot set in nvim_win_set_config()
+    8              0.000009       let winopts.noautocmd = v:true
+                            
+                                  " Create new window
+    8              0.000390       const id = nvim_open_win(pum.buf, v:false, winopts)
+                            
+    8   0.000248   0.000051       call s:set_float_window_options(id, options, 'normal_menu')
+                            
+    8              0.000006       let pum.id = id
+   25              0.000007     endif
+                            
+   25              0.000042     if options.scrollbar_char !=# '' && len(lines) > height
+    5              0.000003       if pum.scroll_id > 0
+                                    " Reuse window
+                                    call nvim_win_set_config(pum.scroll_id, scroll_winopts)
+    5              0.000001       else
+                                    " NOTE: It cannot set in nvim_win_set_config()
+    5              0.000005         let scroll_winopts.noautocmd = v:true
+                            
+    5              0.000105         let scroll_id = nvim_open_win( pum.scroll_buf, v:false, scroll_winopts)
+    5   0.000118   0.000049         call s:set_float_window_options(scroll_id, options, 'scrollbar')
+                            
+    5              0.000004         let pum.scroll_id = scroll_id
+    5              0.000001       endif
+   20              0.000015     elseif pum.scroll_id > 0
+    2   0.000654   0.000007       call pum#popup#_close_id(pum.scroll_id)
+    2              0.000003       let pum.scroll_id = -1
+   25              0.000007     endif
+                            
+   25              0.000027     let pum.pos = pos
+   25              0.000031     let pum.horizontal_menu = v:false
+                              else
+                                let winopts = #{   pos: 'topleft',   line: pos[0] + 1,   col: pos[1] + 1,   highlight: options.highlight_normal_menu,   maxwidth: width,   maxheight: height,   scroll: options.scrollbar_char !=# '',   wrap: 0,   zindex: options.zindex, }
+                            
+                                if options.border->type() ==# v:t_string
+                                  if options.border ==# 'double'
+                                    let winopts.border = [2, 2, 2, 2]
+                                  elseif options.border !=# 'none'
+                                    let winopts.border = [1, 1, 1, 1]
+                                  endif
+                                else
+                                  let winopts.borderchars = options.border
+                                endif
+                            
+                                if pum.id > 0
+                                  call pum#close('complete_done', v:false)
+                            
+                                  call popup_move(pum.id, winopts)
+                                  call popup_settext(pum.id, lines)
+                                else
+                                  call pum#close()
+                            
+                                  let pum.id = lines->popup_create(winopts)
+                                  let pum.buf = pum.id->winbufnr()
+                                endif
+                            
+                                let pum.pos = pos
+                                let pum.horizontal_menu = v:false
+   25              0.000007   endif
+                            
+   25              0.000022   if reversed && pum.scroll_id > 0
+                                " The cursor must be end
+                                call win_execute(pum.id, 'call cursor("$", 0)')
+                                call pum#popup#_redraw_scroll()
+                            
+                                if has('nvim')
+                                  call nvim_win_set_config(pum.scroll_id, #{   relative: 'editor',   row: pum.scroll_row + height - 1,   col: pum.scroll_col, })
+                                endif
+   25              0.000006   endif
+                            
+   25              0.000583   let pum.items = items->copy()
+   25              0.000016   let pum.cursor = 0
+   25              0.000026   let pum.direction = direction
+   25              0.000015   let pum.height = height
+   25              0.000015   let pum.width = width
+   25              0.000029   let pum.border_width = border_left + border_right
+   25              0.000026   let pum.border_height = border_top + border_bottom
+   25              0.000023   let pum.len = items->len()
+   25              0.000018   let pum.reversed = reversed
+   25              0.000020   let pum.startcol = a:startcol
+   25   0.000182   0.000077   let pum.startrow = pum#_row()
+   25              0.000043   let pum.current_line = '.'->getline()
+   25   0.000177   0.000053   let pum.col = pum#_col()
+   25   0.000325   0.000127   let pum.orig_input = pum#_getline()[a:startcol - 1 : pum#_col() - 2]
+   25              0.000027   let pum.orig_line = '.'->getline()
+   25              0.000024   let pum.changedtick = b:changedtick
+                            
+   25              0.000018   if !pum.horizontal_menu
+                                " Highlight
+   25   0.071885   0.000242     call s:highlight_items(items, max_columns)
+                            
+                                " Simple highlight matches
+   25              0.000239     silent! call matchdelete(pum.matched_id, pum.id)
+   25              0.000023     if options.highlight_matches !=# ''
+                                  let pattern = pum.orig_input->escape('~"*\.^$[]') ->substitute('\w\ze.', '\0[^\0]\\{-}', 'g')
+                                  call matchadd( options.highlight_matches, pattern, 0, pum.matched_id, #{ window: pum.id })
+   25              0.000008     endif
+   25              0.000007   endif
+                            
+   25              0.000014   if a:insert
+                                call pum#map#insert_relative(+1)
+   25              0.000018   elseif options.auto_select
+   25   0.026911   0.000119     call pum#map#select_relative(+1)
+                              else
+                                call pum#popup#_redraw()
+   25              0.000005   endif
+                            
+                              " Close popup automatically
+                              " NOTE: ModeChanged i:[^i]* does not work well when html lsp
+   25              0.000017   if a:mode ==# 'i'
+    6              0.000011     autocmd pum InsertLeave * ++once ++nested call pum#close()
+    6              0.000015     autocmd pum TextChangedI,CursorMovedI * ++nested call pum#popup#_check_text_changed()
+   19              0.000013   elseif a:mode ==# 'c'
+   19              0.000035     autocmd pum CmdlineChanged * ++nested call pum#popup#_check_text_changed()
+   19              0.000032     if '##CursorMovedC'->exists()
+                                  autocmd pum CursorMovedC * ++once ++nested call pum#close()
+   19              0.000005     endif
+   25              0.000006   endif
+   25              0.000083   autocmd pum ModeChanged [ct]:* ++once ++nested call pum#close()
+   25              0.000062   autocmd pum CmdWinEnter,CmdWinLeave * ++once ++nested call pum#close()
+   25              0.000035   autocmd pum CursorHold * ++once ++nested call pum#close()
+                            
+   25   0.000980   0.000168   call pum#popup#_reset_auto_confirm(a:mode)
+                            
+   25              0.000013   return pum.id
+
+FUNCTION  <SNR>86_has()
+    Defined: ~/.cache/dpp/repos/github.com/cohama/lexima.vim/autoload/vital/_lexima/Data/List.vim:236
+Called 4 times
+Total time:   0.000013
+ Self time:   0.000013
+
+count  total (s)   self (s)
+    4              0.000012   return index(a:list, a:value) isnot -1
+
+FUNCTION  ddc_cmdline_history#get()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc-source-cmdline-history/autoload/ddc_cmdline_history.vim:1
+Called 3 times
+Total time:   0.013180
+ Self time:   0.009866
+
+count  total (s)   self (s)
+    3              0.000026   let type = getcmdtype()
+    3              0.000023   let max = min([a:max, histnr(type)])
+    3              0.000008   if max < 1
+                                return []
+    3              0.000004   endif
+    3   0.013107   0.009793   return map(range(1, max), { _, val -> histget(type, -val) })
+
+FUNCTION  pum#util#_luacheck()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/util.vim:63
+Called 19 times
+Total time:   0.006707
+ Self time:   0.006707
+
+count  total (s)   self (s)
+   19              0.006701   return has('nvim') && luaeval( 'type(select(2, pcall(require, _A.module))) == "table"', #{ module: a:module })
+
+FUNCTION  denops#_internal#server#chan#is_connected()
+    Defined: ~/.cache/dpp/nvim/.dpp/autoload/denops/_internal/server/chan.vim:85
+Called 333 times
+Total time:   0.001414
+ Self time:   0.001414
+
+count  total (s)   self (s)
+  333              0.001298   return s:chan isnot# v:null
+
+FUNCTION  <SNR>65_complete_done()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:372
+Called 2 times
+Total time:   0.000348
+ Self time:   0.000132
+
+count  total (s)   self (s)
+    2              0.000017   let g:pum#completed_item = a:completed_item
+    2              0.000007   let g:pum#completed_event = a:event
+                            
+    2              0.000029   if '#User#PumCompleteDonePre'->exists()
+                                doautocmd <nomodeline> User PumCompleteDonePre
+    2              0.000002   endif
+                            
+    2              0.000005   let v:completed_item = g:pum#completed_item
+                            
+    2              0.000008   if mode() ==# 'i' && v:completed_item ==# g:pum#completed_item
+                                " NOTE: The events are available for insert mode only
+                            
+                                if '#CompleteDonePre'->exists()
+                                  doautocmd <nomodeline> CompleteDonePre
+                                endif
+                            
+                                if '#CompleteDone'->exists()
+                                  doautocmd <nomodeline> CompleteDone
+                                endif
+                            
+                                " NOTE: v:completed_item may be changed
+                                if v:completed_item !=# g:pum#completed_item
+                                  let g:pum#completed_item = v:completed_item
+                                endif
+    2              0.000001   endif
+                            
+    2              0.000008   if '#User#PumCompleteDone'->exists()
+    2   0.000231   0.000016     doautocmd <nomodeline> User PumCompleteDone
+    2              0.000001   endif
+
+FUNCTION  pum#_get()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:5
+Called 1118 times
+Total time:   0.003243
+ Self time:   0.003243
+
+count  total (s)   self (s)
+ 1118              0.001250   if !'s:pum'->exists()
+                                call pum#_init()
+ 1118              0.000306   endif
+ 1118              0.000539   return s:pum
+
+FUNCTION  <SNR>74_healthcheck()
+    Defined: ~/.cache/dpp/nvim/.dpp/autoload/denops/_internal/rpc/nvim.vim:42
+Called 98 times
+Total time:   0.008544
+ Self time:   0.008544
+
+count  total (s)   self (s)
+   98              0.000793   try
+   98              0.006316     call rpcnotify(a:chan._id, 'void')
+                              catch
+                                call timer_stop(a:chan._healthcheck_timer)
+                                call a:chan._on_close(a:chan)
+   98              0.000183   endtry
+
+FUNCTION  <SNR>80_insert()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/map.vim:309
+Called 5 times
+Total time:   0.002940
+ Self time:   0.000509
+
+count  total (s)   self (s)
+    5              0.000007   augroup pum-temp
+    5              0.000058     autocmd!
+    5              0.000004   augroup END
+                            
+    5   0.000055   0.000026   let pum = pum#_get()
+                            
+                              " Convert to 0 origin
+    5              0.000011   const startcol = pum.startcol - 1
+    5              0.000020   const prev_input = startcol == 0 ? '' : pum#_getline()[: startcol - 1]
+    5   0.000077   0.000043   const next_input = pum#_getline()[startcol :][a:prev_word->len():]
+                            
+                              " NOTE: current_word must be changed before call after_func
+    5              0.000012   let pum.current_word = a:word
+                            
+                              " NOTE: The text changes fires TextChanged events.  It must be ignored.
+    5   0.000113   0.000037   call pum#_inc_skip_complete()
+                            
+    5              0.000009   if mode() ==# 'c'
+                                " NOTE: setcmdpos() does not work in command line mode!
+    5   0.002400   0.000107     call setcmdline(prev_input .. a:word .. next_input, pum.startcol + a:word->len())
+                              elseif mode() ==# 't'
+                                call s:insert_line_jobsend(a:word)
+                              elseif pum#_options().use_setline
+                                call setline('.', prev_input .. a:word .. next_input)
+                                call cursor(0, pum.startcol + len(a:word))
+                              elseif a:word ==# '' || a:after_func != v:null
+                                " NOTE: complete() does not work for empty string
+                                call s:insert_line_feedkeys(a:word, a:after_func)
+                                return
+                              else
+                                call s:insert_line_complete(a:word)
+                                return
+    5              0.000003   endif
+                            
+    5              0.000012   if a:after_func != v:null
+                                call call(a:after_func, [])
+    5              0.000003   endif
+
+FUNCTION  ddc#on_event()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc.vim:81
+Called 165 times
+Total time:   0.028820
+ Self time:   0.002348
+
+count  total (s)   self (s)
+                              " NOTE: If denops isn't running, stop
+  165   0.009530   0.000617   if !ddc#denops#_running()
+                                return
+  165              0.000045   endif
+                            
+  165   0.018975   0.001417   call ddc#denops#_notify('onEvent', [a:event])
+
+FUNCTION  pum#_getline()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:303
+Called 104 times
+Total time:   0.000530
+ Self time:   0.000530
+
+count  total (s)   self (s)
+  104              0.000485   return mode() ==# 'c' ? getcmdline() : mode() ==# 't' && !has('nvim') ? ''->term_getline('.') : '.'->getline()
+
+FUNCTION  pum#open()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:162
+Called 25 times
+Total time:   1.334732
+ Self time:   0.000896
+
+count  total (s)   self (s)
+   25              0.000190   if !has('patch-9.0.1276') && !has('nvim-0.8')
+                                call pum#util#_print_error( 'pum.vim requires Vim 9.0.1276+ or neovim 0.8.0+.')
+                                return -1
+   25              0.000011   endif
+                            
+   25              0.000101   if a:items->empty() || pumvisible() || wildmenumode()
+                                call pum#close()
+                                return
+   25              0.000007   endif
+                            
+   25              0.000017   try
+   25   1.334207   0.000371     return pum#popup#_open(a:startcol, a:items, a:mode, a:insert)
+                              catch /E523:\|E565:\|E5555:/
+                                " Ignore "Not allowed here"
+                                return -1
+   25              0.000018   endtry
+
+FUNCTION  <SNR>67_highlight_items()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/popup.vim:565
+Called 25 times
+Total time:   0.071643
+ Self time:   0.054279
+
+count  total (s)   self (s)
+   25   0.000154   0.000086   let pum = pum#_get()
+   25   0.000630   0.000067   let options = pum#_options()
+                            
+  598              0.000286   for row in range(1, a:items->len())
+                                " Default highlights
+                            
+  573              0.000443     let item = a:items[row - 1]
+  573              0.000735     let item_highlights = item->get('highlights', [])
+                            
+  573              0.000239     let start = 1
+ 3406              0.001726     for [order, max_column] in a:max_columns
+ 3378   0.011482   0.010500       for hl in item_highlights->copy()->filter( {_, val -> val.type ==# order})
+  545   0.017802   0.002050         call s:highlight( hl.hl_group, hl.name, s:priority_highlight_item, row, start + hl.col - 1, hl.width)
+ 3378              0.001927       endfor
+                            
+                                  " NOTE: The byte length of multibyte characters may be larger than
+                                  " max_column calculated by strdisplaywidth().
+ 2833              0.007595       let elem = ['abbr', 'kind', 'menu']->index(order) >= 0 ? item->get(order, '') : item->get('columns', {})->get(order, '')
+ 2833              0.004488       let width = max_column - elem->strdisplaywidth() + elem->strlen()
+                            
+ 2833              0.003116       let highlight_column = options.highlight_columns->get(order, '')
+ 2833              0.001502       if highlight_column !=# ''
+                                    call s:highlight( highlight_column, 'pum_' .. order, s:priority_highlight_column, row, start, width)
+ 2833              0.000619       endif
+                            
+ 2833              0.001462       let start += width
+ 3406              0.001524     endfor
+  598              0.000145   endfor
+
+FUNCTION  ddc#enable()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/ddc.vim/autoload/ddc.vim:1
+Called 2 times
+Total time:   0.000190
+ Self time:   0.000029
+
+count  total (s)   self (s)
+    2   0.000187   0.000026   call ddc#denops#_init(a:opts)
+
+FUNCTION  <SNR>66_strwidthpart()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum/util.vim:52
+Called 159 times
+Total time:   0.029714
+ Self time:   0.029714
+
+count  total (s)   self (s)
+  159              0.001564   const str = a:str->tr("\t", ' ')
+  159              0.000094   const vcol = a:width + 2
+  159              0.028013   return str->matchstr('.*\%<' .. (vcol < 0 ? 0 : vcol) .. 'v')
+
+FUNCTION  quick_scope#StopTimer()
+    Defined: ~/.cache/dpp/repos/github.com/unblevable/quick-scope/autoload/quick_scope.vim:64
+Called 1 time
+Total time:   0.000028
+ Self time:   0.000028
+
+count  total (s)   self (s)
+    1              0.000013   if g:qs_delay > 0
+    1              0.000009     call timer_stop(s:timer)
+    1              0.000002   endif
+
+FUNCTION  pum#skip_complete()
+    Defined: ~/.cache/dpp/repos/github.com/Shougo/pum.vim/autoload/pum.vim:286
+Called 36 times
+Total time:   0.001532
+ Self time:   0.000794
+
+count  total (s)   self (s)
+   36   0.000586   0.000279   let pum = pum#_get()
+   36              0.000060   let skip = pum.skip_complete
+                            
+   36              0.000090   let pum.skip_count -= 1
+   36              0.000047   if pum.skip_count <= 0
+   32   0.000630   0.000199     call pum#_reset_skip_complete()
+   36              0.000015   endif
+                            
+   36              0.000026   return skip
+
+FUNCTIONS SORTED ON TOTAL TIME
+count  total (s)   self (s)  function
+   25   1.334732   0.000896  pum#open()
+   25   1.333836   0.020177  pum#popup#_open()
+  573   1.195919   0.046680  pum#_format_item()
+  159   1.149239   0.006041  pum#util#_truncate()
+  159   1.111895             <SNR>66_strwidthpart_reverse()
+   25   0.071643   0.054279  <SNR>67_highlight_items()
+   30   0.033272   0.003179  pum#map#select_relative()
+  159   0.029714             <SNR>66_strwidthpart()
+  165   0.028820   0.002348  ddc#on_event()
+   30   0.021592   0.021509  pum#popup#_redraw_scroll()
+  168   0.018247   0.002654  ddc#denops#_notify()
+  333   0.017810   0.007242  ddc#denops#_running()
+  575   0.017167   0.008199  <SNR>67_highlight()
+    3   0.013180   0.009866  ddc_cmdline_history#get()
+  488   0.013098   0.012362  denops#api#eval()
+  776   0.012208             pum#_options()
+    5   0.010920   0.000672  pum#map#insert_relative()
+   98   0.008544             <SNR>74_healthcheck()
+   41   0.007400   0.001158  pum#close()
+  169   0.006754   0.001429  denops#notify()
+
+FUNCTIONS SORTED ON SELF TIME
+count  total (s)   self (s)  function
+  159              1.111895  <SNR>66_strwidthpart_reverse()
+   25   0.071643   0.054279  <SNR>67_highlight_items()
+  573   1.195919   0.046680  pum#_format_item()
+  159              0.029714  <SNR>66_strwidthpart()
+   30   0.021592   0.021509  pum#popup#_redraw_scroll()
+   25   1.333836   0.020177  pum#popup#_open()
+  488   0.013098   0.012362  denops#api#eval()
+  776              0.012208  pum#_options()
+    3   0.013180   0.009866  ddc_cmdline_history#get()
+   98              0.008544  <SNR>74_healthcheck()
+  575   0.017167   0.008199  <SNR>67_highlight()
+  333   0.017810   0.007242  ddc#denops#_running()
+   19              0.006707  pum#util#_luacheck()
+  159   1.149239   0.006041  pum#util#_truncate()
+   16              0.004355  pum#popup#_redraw()
+  335   0.006049   0.003312  denops#plugin#is_loaded()
+  169              0.003255  denops#_internal#rpc#nvim#notify()
+ 1118              0.003243  pum#_get()
+  333   0.004647   0.003233  denops#server#status()
+   30   0.033272   0.003179  pum#map#select_relative()
+

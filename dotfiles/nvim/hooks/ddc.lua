@@ -10,7 +10,7 @@ local commonSources = {
 
 local commonLangSources = utils.array_concat_unique({
   "lsp",
-  "treesitter",
+  -- "treesitter",
 }, commonSources)
 
 local headMatchers = {
@@ -41,7 +41,6 @@ vim.fn["ddc#custom#patch_global"]({
   cmdlineSources = {
     [":"] = {
       "file",
-      "path",
       "cmdline",
       "cmdline-history",
       "around",
@@ -53,7 +52,7 @@ vim.fn["ddc#custom#patch_global"]({
       matchers = headMatchers,
       sorters = { "sorter_rank" },
       converters = commonConverters,
-      minAutoCompleteLength = 1,
+      minAutoCompleteLength = 3,
       ignoreCase = true,
     },
     around = {
@@ -65,6 +64,7 @@ vim.fn["ddc#custom#patch_global"]({
         "sorter_fuzzy",
       },
       converters = fuzzyConverters,
+      minAutoCompleteLength = 1,
       maxAutoCompleteLength = 5,
     },
     buffer = {
@@ -120,11 +120,11 @@ vim.fn["ddc#custom#patch_global"]({
       converters = fuzzyConverters,
       forceCompletionPattern = [[\.\w*]],
     },
-    path = {
-      mark = "[path]",
-      forceCompletionPattern = [[\S/\S*]],
-      isVolatile = true,
-    },
+    -- path = {
+    --   mark = "[path]",
+    --   forceCompletionPattern = [[\S/\S*]],
+    --   isVolatile = true,
+    -- },
     rg = {
       mark = "[rg]",
       matchers = {
@@ -134,7 +134,7 @@ vim.fn["ddc#custom#patch_global"]({
         "sorter_fuzzy",
       },
       converters = fuzzyConverters,
-      minAutoCompleteLength = 2,
+      minAutoCompleteLength = 6,
     },
     treesitter = {
       mark = "[TS]",
@@ -145,7 +145,7 @@ vim.fn["ddc#custom#patch_global"]({
         "sorter_fuzzy",
       },
       converters = fuzzyConverters,
-      -- minAutoCompleteLength = 6,
+      minAutoCompleteLength = 6,
     },
   },
   sourceParams = {
@@ -161,9 +161,9 @@ vim.fn["ddc#custom#patch_global"]({
         luasnip.lsp_expand(body)
       end),
     },
-    path = {
-      cmd = { "fd", "--max-depth", "5" },
-    },
+    -- path = {
+    --   cmd = { "fd", "--max-depth", "5" },
+    -- },
   },
   postFilters = {
     "postfilter_score",

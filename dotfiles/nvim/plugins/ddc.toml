@@ -54,9 +54,9 @@ repo = 'delphinus/ddc-treesitter'
 depends = 'nvim-treesitter'
 on_source = 'ddc.vim'
 
-[[plugins]]
-repo = 'tani/ddc-path'
-on_source = 'ddc.vim'
+# [[plugins]]
+# repo = 'tani/ddc-path'
+# on_source = 'ddc.vim'
 
 # filters
 [[plugins]]
