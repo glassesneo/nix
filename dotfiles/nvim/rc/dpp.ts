@@ -49,6 +49,7 @@ export class Config extends BaseConfig {
       { name: "snippet.toml", lazy: true },
       { name: "statusline.toml", lazy: true },
       // { name: "skk.toml", lazy: true },
+      { name: "terminal.toml", lazy: true },
       { name: "treesitter.toml", lazy: true },
       { name: "ui.toml", lazy: true },
       { name: "visibility.toml", lazy: true },

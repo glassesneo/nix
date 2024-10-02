@@ -33,7 +33,19 @@ lspconfig.ts_ls.setup({
 
 lspconfig.svelte.setup({})
 
-lspconfig.nim_langserver.setup({})
+local currentDir = vim.fn.getcwd()
+
+lspconfig.nim_langserver.setup({
+  root_dir = lspconfig.util.root_pattern("*.nimble", ".git"),
+  settings = {
+    nim = {
+      projectMapping = {
+        projectFile = currentDir .. "src/" .. vim.fs.basename(currentDir) .. ".nim",
+        fileRegex = ".*\\.nim",
+      },
+    },
+  },
+})
 
 -- lspconfig.efm.setup({
 --   init_options = {

@@ -58,6 +58,9 @@ repo = 'Shougo/ddu-filter-matcher_substring'
 repo = 'Shougo/ddu-filter-matcher_relative'
 
 [[plugins]]
+repo = 'Shougo/ddu-filter-matcher_ignore_files'
+
+[[plugins]]
 repo = 'Shougo/ddu-filter-sorter_alpha'
 on_source = 'ddu.vim'
 

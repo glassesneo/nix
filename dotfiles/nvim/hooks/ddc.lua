@@ -134,7 +134,7 @@ vim.fn["ddc#custom#patch_global"]({
         "sorter_fuzzy",
       },
       converters = fuzzyConverters,
-      minAutoCompleteLength = 6,
+      minAutoCompleteLength = 2,
     },
     treesitter = {
       mark = "[TS]",
@@ -145,7 +145,7 @@ vim.fn["ddc#custom#patch_global"]({
         "sorter_fuzzy",
       },
       converters = fuzzyConverters,
-      minAutoCompleteLength = 6,
+      -- minAutoCompleteLength = 6,
     },
   },
   sourceParams = {
@@ -277,7 +277,7 @@ vim.fn["pum#set_option"]({
 })
 
 vim.fn["pum#set_local_option"]("c", {
-  max_height = 90,
+  max_height = vim.go.lines - 20,
   preview = false,
 })
 

@@ -42,6 +42,7 @@ vim.fn["ddu#custom#patch_local"]("floating_finder", {
       statusline = false,
       floatingBorder = "rounded",
       prompt = "Search: ",
+      winRow = (vim.go.lines - vim.go.lines % 2) / 2 - 9,
       previewFloating = true,
       previewFloatingBorder = "rounded",
       previewFloatingTitle = "Preview",
@@ -64,6 +65,7 @@ vim.fn["ddu#custom#patch_local"]("floating_finder", {
     ["_"] = {
       matchers = {
         "matcher_substring",
+        "matcher_ignore_files",
       },
       sorters = {
         "sorter_alpha",
@@ -72,6 +74,20 @@ vim.fn["ddu#custom#patch_local"]("floating_finder", {
       columns = {
         "icon_filename",
       },
+    },
+  },
+  sourceParams = {
+    file_rec = {
+      ignoredDirectories = {
+        ".git",
+        "nimcache",
+        "testresults",
+      },
+    },
+  },
+  filterParams = {
+    matcher_ignore_files = {
+      ignoreGlobs = { "testresults.html", ".DS_Store" },
     },
   },
   kindOptions = {
@@ -174,6 +190,11 @@ vim.fn["ddu#custom#patch_local"]("side_filer", {
       },
     },
   },
+  filterParams = {
+    matcher_ignore_files = {
+      ignoreGlobs = { ".DS_Store" },
+    },
+  },
   kindOptions = {
     file = {
       defaultAction = "open",
@@ -191,9 +212,11 @@ customAction("ui", "filer", "filerOpen", function()
   if item.isTree then
     doAction("expandItem", { mode = "toggle", isInTree = true })
   else
-    doAction("itemAction", { name = "open" })
-    -- doAction("itemAction", { name = "open", params = { command = "wincmd p <Bar> drop" } })
-    -- vim.cmd([[call ddu#ui#do_action('itemAction', {'name': 'open', 'params': {'command': 'wincmd p <Bar> drop'}})]])
+    -- doAction("itemAction", { name = "open" })
+    -- doAction("itemAction", { name = "open", params = { command = "vsplit" } })
+    -- vim.cmd([[call ddu#ui#do_action('itemAction', {'name': 'open', 'params': {'command': 'wincmd p | drop'}})]])
+    doAction("closePreviewWindow")
+    doAction("itemAction", { name = "open", params = { command = "wincmd l | drop" } })
   end
 end)
 
@@ -232,7 +255,6 @@ vim.api.nvim_create_autocmd("FileType", {
   callback = function()
     mapAction("n", "q", "quit")
     mapAction("n", "<CR>", "filerOpen")
-    -- mapAction("n", "<BS>", "itemAction", { name = "narrow", params = { path = ".." } })
     mapMultiActions("n", "j", {
       { "cursorNext" },
       { "updatePreview" },
@@ -261,6 +283,15 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 utils.map("n", "<Space>f", function()
+  local windows = vim.api.nvim_list_wins()
+  for _, win in ipairs(windows) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    local buf_filetype = vim.api.nvim_get_option_value("filetype", { buf = buf })
+    if buf_filetype == "ddu-filer" then
+      vim.api.nvim_set_current_win(win)
+      return
+    end
+  end
   vim.fn["ddu#start"]({ name = "side_filer" })
 end)
 --- }}}

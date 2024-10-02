@@ -29,6 +29,8 @@ require("lualine").setup({
     theme = neofusion_lualine,
     disabled_filetypes = {
       "ddu-filer",
+      "ddu-ff",
+      "deol",
     },
   },
   sections = {
@@ -181,8 +183,8 @@ require("lualine").setup({
     lualine_y = {},
     lualine_z = {
       {
-        "filesize",
-        -- separator = { left = '║', right = '║' },
+        total_lines,
+        color = { fg = neofusion_palette.dark4 },
       },
     },
   },
