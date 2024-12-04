@@ -1,4 +1,5 @@
 [[plugins]]
 repo = 'Shougo/deol.nvim'
 on_map = { n = '<Leader>d' }
+# on_source = ['ddu.vim']
 hooks_file = '$HOOK_DIR/deol.lua'

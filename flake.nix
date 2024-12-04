@@ -10,7 +10,7 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,7 +27,15 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nixos-hardware, nix-darwin, nix-on-droid, home-manager }:
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      nixos-hardware,
+      nix-darwin,
+      nix-on-droid,
+      home-manager,
+    }:
     let
       username = builtins.getEnv "USER";
       useremail = "glassesneo@protonmail.com";
@@ -35,6 +43,20 @@
       pkgs = import inputs.nixpkgs {
         system = "${system}";
         config.allowUnfree = true;
+        # overlays = [
+        #   (final: prev: {
+        #     deno = prev.deno.overrideAttrs (oldAttrs: {
+        #       pname = "deno";
+        #       version = "1.46.3";
+        #       src = prev.fetchFromGitHub {
+        #         owner = "denoland";
+        #         repo = "deno";
+        #         rev = "v${oldAttrs.version}";
+        #         sha256 = "sha256-8yBcSiaav28AevAH5wh0VwpMR5U5Vong8D+UFCx/wjo=";
+        #       };
+        #     });
+        #   })
+        # ];
       };
       specialArgs = inputs // {
         inherit username useremail;
@@ -95,34 +117,32 @@
       };
 
     in
-      {
-        nixosConfigurations = {
-          "Narukami" = inputs.nixpkgs.lib.nixosSystem commonNixOSConfigurations;
+    {
+      nixosConfigurations = {
+        "Narukami" = inputs.nixpkgs.lib.nixosSystem commonNixOSConfigurations;
+      };
+      darwinConfigurations = {
+        "Oboro" = nix-darwin.lib.darwinSystem commonDarwinConfigurations;
+      };
+      nixOnDroidConfigurations = {
+        default = nix-on-droid.lib.nixOnDroidConfiguration commonNixOnDroidConfigurations;
+      };
+      homeConfigurations = {
+        "${username}@Narukami" = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./home/hosts/Narukami.nix ];
+          extraSpecialArgs = specialArgs;
         };
-        darwinConfigurations = {
-          "Oboro" = nix-darwin.lib.darwinSystem commonDarwinConfigurations;
+        "${username}@Oboro" = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./home/hosts/Oboro.nix ];
+          extraSpecialArgs = specialArgs;
         };
-        nixOnDroidConfigurations = {
-          default = nix-on-droid.lib.nixOnDroidConfiguration commonNixOnDroidConfigurations;
-        };
-        homeConfigurations = {
-          "${username}@Narukami" = home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
-            modules = [ ./home/hosts/Narukami.nix ];
-            extraSpecialArgs = specialArgs;
-          };
-          "${username}@Oboro" = home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
-            modules = [ ./home/hosts/Oboro.nix ];
-            extraSpecialArgs = specialArgs;
-          };
-          "nix-on-droid" = home-manager.lib.homeManagerConfiguration {
-            pkgs = import nixpkgs {
-              system = "aarch64-linux";
-            };
-            modules = [ ./home/hosts/localhost.nix ];
-            extraSpecialArgs = specialArgs;
-          };
+        "nix-on-droid" = home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs { system = "aarch64-linux"; };
+          modules = [ ./home/hosts/localhost.nix ];
+          extraSpecialArgs = specialArgs;
         };
       };
+    };
 }

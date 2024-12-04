@@ -7,6 +7,22 @@ lua_add = '''
 '''
 
 [[plugins]]
+repo = 'yuki-yano/fuzzy-motion.vim'
+depends = ['denops.vim']
+on_cmd = 'FuzzyMotion'
+lua_add = '''
+  vim.keymap.set("n", "<S-s>", function()
+    vim.cmd["FuzzyMotion"]()
+  end, { noremap = true })
+'''
+lua_source = '''
+  vim.g["fuzzy_motion_matchers"] = { "fzf" }
+'''
+
+[[plugins]]
 repo = 'haya14busa/vim-edgemotion'
 on_map = '<Plug>(edgemotion-'
-hooks_file = '$HOOK_DIR/edgemotion.lua'
+lua_add = '''
+  vim.keymap.set({ "n", "x", "o" }, "<C-j>", "<Plug>(edgemotion-j)")
+  vim.keymap.set({ "n", "x", "o" }, "<C-k>", "<Plug>(edgemotion-k)")
+'''

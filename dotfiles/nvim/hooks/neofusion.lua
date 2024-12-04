@@ -19,8 +19,11 @@ require("neofusion").setup({
   invert_tabline = false,
   invert_intend_guides = false,
   inverse = true, -- invert background for search, diffs, statuslines and errors
-  palette_overrides = {},
+  palette_overrides = {
+    -- faded_red = "#ffc70e",
+  },
   overrides = {
+    -- ["@lsp.type.variable"] = { fg = "#ffc70e" },
     CursorLine = { bg = neofusion_palette.dark_aqua },
     CursorColumn = { bg = neofusion_palette.dark_aqua },
   },

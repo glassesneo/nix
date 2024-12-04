@@ -2,7 +2,6 @@
 repo = 'vim-skk/skkeleton'
 depends = 'denops.vim'
 on_event = 'InsertEnter'
-on_source = 'ddc.vim'
 hooks_file = '$HOOK_DIR/skk.lua'
 
 [[plugins]]

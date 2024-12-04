@@ -1,9 +1,25 @@
 [[plugins]]
 repo = 'L3MON4D3/LuaSnip'
 rev = 'v2.*'
-depends = ['friendly-snippets']
+depends = ['nvim-treesitter', 'friendly-snippets']
 on_source = 'ddc.vim'
-hooks_file = '$HOOK_DIR/luasnip.lua'
+lua_source = '''
+  require("luasnip.loaders.from_vscode").lazy_load({
+    paths = {
+      "$XDG_CACHE_HOME/dpp/repos/github.com/rafamadriz/friendly-snippets",
+    },
+  })
+'''
 
 [[plugins]]
 repo = 'rafamadriz/friendly-snippets'
+
+[[plugins]]
+repo = 'TwIStOy/luasnip-snippets'
+depends = ['LuaSnip']
+on_event = 'LspAttach'
+lua_source = """
+require("luasnip-snippets").setup({
+  disable_langs = { "dart" },
+})
+"""

@@ -1,5 +1,5 @@
 --- lua_source {{{
-local neofusion_palette = require("neofusion.palette")
+-- local neofusion_palette = require("neofusion.palette")
 
 require("hlchunk").setup({
   indent = {
@@ -10,9 +10,9 @@ require("hlchunk").setup({
       "#0d428c",
     },
   },
-  blank = {
-    enable = false,
-  },
+  -- blank = {
+  --   enable = true,
+  -- },
   chunk = {
     enable = false,
     use_treesitter = true,
@@ -29,7 +29,7 @@ require("hlchunk").setup({
   line_num = {
     enable = true,
     use_treesitter = true,
-    style = neofusion_palette.faded_purple,
+    -- style = neofusion_palette.faded_purple,
   },
 })
 --- }}}

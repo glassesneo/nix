@@ -1,4 +1,32 @@
 [[plugins]]
 repo = 'rcarriga/nvim-notify'
 on_event = 'VimEnter'
-hooks_file = "$HOOK_DIR/notify.lua"
+lua_source = '''
+  local notify = require("notify")
+  notify.setup({
+    stages = "slide",
+    max_width = 50,
+    timeout = 1800,
+  })
+  vim.notify = notify
+'''
+
+[[plugins]]
+repo = 'j-hui/fidget.nvim'
+rev = "v1.4.5"
+on_event = 'VimEnter'
+hooks_file = "$HOOK_DIR/fidget.lua"
+
+[[plugins]]
+repo = 'matsui54/denops-popup-preview.vim'
+depends = 'denops.vim'
+on_event = 'LspAttach'
+lua_source = '''
+  vim.fn["popup_preview#enable"]()
+  vim.keymap.set("i", "<C-f>", function()
+    vim.fn["popup_preview#scroll"](4)
+  end)
+  vim.keymap.set("i", "<C-b>", function()
+    vim.fn["popup_preview#scroll"](-4)
+  end)
+'''

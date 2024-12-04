@@ -1,13 +1,13 @@
 { hostname, ... }:
 
-  ###################################################################################
-  #
-  #  macOS's System configuration
-  #
-  #  All the configuration options are documented here:
-  #    https://daiderd.com/nix-darwin/manual/index.html#sec-options
-  #
-  ###################################################################################
+###################################################################################
+#
+#  macOS's System configuration
+#
+#  All the configuration options are documented here:
+#    https://daiderd.com/nix-darwin/manual/index.html#sec-options
+#
+###################################################################################
 {
 
   system = {
@@ -24,19 +24,19 @@
 
       dock = {
         autohide = true;
-        autohide-delay = 0.24;
-        autohide-time-modifier = 0.8;
+        autohide-delay = 1000.0;
         mouse-over-hilite-stack = true;
         orientation = "bottom";
         show-recents = false;
       };
       finder = {
-        _FXShowPosixPathInTitle = true;  # show full path in finder title
-        AppleShowAllExtensions = true;  # show all file extensions
-        FXEnableExtensionChangeWarning = false;  # disable warning when changing file extension
-        QuitMenuItem = true;  # enable quit menu item
-        ShowPathbar = true;  # show path bar
-        ShowStatusBar = true;  # show status bar
+        _FXShowPosixPathInTitle = true; # show full path in finder title
+        AppleShowAllExtensions = true; # show all file extensions
+        CreateDesktop = false;
+        FXEnableExtensionChangeWarning = false; # disable warning when changing file extension
+        QuitMenuItem = true; # enable quit menu item
+        ShowPathbar = true; # show path bar
+        ShowStatusBar = true; # show status bar
       };
       menuExtraClock = {
         IsAnalog = false;
@@ -56,22 +56,27 @@
       };
       NSGlobalDomain = {
         # `defaults read NSGlobalDomain "xxx"`
-        "com.apple.swipescrolldirection" = true;  # enable natural scrolling(default to true)
-        "com.apple.sound.beep.feedback" = 0;  # disable beep sound when pressing volume up/down key
-        AppleInterfaceStyle = "Dark";  # dark mode
-        AppleKeyboardUIMode = 3;  # Mode 3 enables full keyboard control.
-        ApplePressAndHoldEnabled = true;  # enable press and hold
+        "com.apple.swipescrolldirection" = true; # enable natural scrolling(default to true)
+        "com.apple.sound.beep.feedback" = 0; # disable beep sound when pressing volume up/down key
+        "com.apple.mouse.tapBehavior" = 1;
+        AppleEnableMouseSwipeNavigateWithScrolls = true;
+        AppleEnableSwipeNavigateWithScrolls = true;
+        AppleInterfaceStyle = "Dark"; # dark mode
+        AppleKeyboardUIMode = 3; # Mode 3 enables full keyboard control.
+        ApplePressAndHoldEnabled = true; # enable press and hold
 
-        InitialKeyRepeat = 15;  # normal minimum is 15 (225 ms), maximum is 120 (1800 ms)
+        InitialKeyRepeat = 12; # normal minimum is 15 (225 ms), maximum is 120 (1800 ms)
         # sets how fast it repeats once it starts. 
-        KeyRepeat = 2;  # normal minimum is 2 (30 ms), maximum is 120 (1800 ms)
+        KeyRepeat = 1; # normal minimum is 2 (30 ms), maximum is 120 (1800 ms)
 
-        NSAutomaticCapitalizationEnabled = false;  # disable auto capitalization
-        NSAutomaticDashSubstitutionEnabled = false;  # disable auto dash substitution
-        NSAutomaticPeriodSubstitutionEnabled = false;  # disable auto period substitution
-        NSAutomaticQuoteSubstitutionEnabled = false;  # disable auto quote substitution
-        NSAutomaticSpellingCorrectionEnabled = false;  # disable auto spelling correction
-        NSNavPanelExpandedStateForSaveMode = true;  # expand save panel by default
+        _HIHideMenuBar = true;
+
+        NSAutomaticCapitalizationEnabled = false; # disable auto capitalization
+        NSAutomaticDashSubstitutionEnabled = false; # disable auto dash substitution
+        NSAutomaticPeriodSubstitutionEnabled = false; # disable auto period substitution
+        NSAutomaticQuoteSubstitutionEnabled = false; # disable auto quote substitution
+        NSAutomaticSpellingCorrectionEnabled = false; # disable auto spelling correction
+        NSNavPanelExpandedStateForSaveMode = true; # expand save panel by default
         NSNavPanelExpandedStateForSaveMode2 = true;
       };
       CustomUserPreferences = {
@@ -123,8 +128,8 @@
         "com.apple.ImageCapture".disableHotPlug = true;
       };
       loginwindow = {
-        GuestEnabled = false;  # disable guest user
-        SHOWFULLNAME = true;  # show full name in login window
+        GuestEnabled = false; # disable guest user
+        SHOWFULLNAME = true; # show full name in login window
       };
     };
     keyboard = {

@@ -1,6 +1,4 @@
 --- lua_add {{{
-local utils = require("utils")
-
 local doAction = vim.fn["ddu#ui#do_action"]
 local multiActions = vim.fn["ddu#ui#multi_actions"]
 local customAction = vim.fn["ddu#custom#action"]
@@ -10,7 +8,7 @@ local customAction = vim.fn["ddu#custom#action"]
 ---@param action string
 ---@param args? table
 local function mapAction(mode, key, action, args)
-  utils.map(mode, key, function()
+  vim.keymap.set(mode, key, function()
     if args ~= nil and next(args) then
       doAction(action, args)
     else
@@ -23,10 +21,21 @@ end
 ---@param key string
 ---@param actionTable ([string]|[string, table])[]
 local function mapMultiActions(mode, key, actionTable)
-  utils.map(mode, key, function()
+  vim.keymap.set(mode, key, function()
     multiActions(actionTable)
   end, { noremap = true, silent = true, buffer = true })
 end
+
+-- wip
+local previewExcludeFileTypes = {
+  "mp3",
+  "mp4",
+  "wav",
+  "png",
+  "jpeg",
+  "jpg",
+  "bmp",
+}
 
 -- ui-ff
 vim.fn["ddu#custom#patch_local"]("floating_finder", {
@@ -118,6 +127,7 @@ end)
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "ddu-ff",
   callback = function()
+    vim.opt.cursorline = true
     mapAction("n", "q", "quit")
     mapAction("n", "<CR>", "itemAction", { name = "open" })
     mapAction("n", "u", "itemAction", { name = "undo" })
@@ -132,10 +142,7 @@ vim.api.nvim_create_autocmd("User", {
     vim.fn["ddu#ui#ff#save_cmaps"]({ "<C-n>", "<C-p>", "<CR>" })
     mapAction("c", "<C-n>", "cursorNext", { loop = true })
     mapAction("c", "<C-p>", "cursorPrevious", { loop = true })
-    -- utils.map("c", "<CR>", function()
-    --   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-c>", true, true, true), "n", false)
-    -- end)
-    utils.map("c", "<CR>", "<Cmd>OpenFileCmd<CR><Esc>")
+    vim.keymap.set("c", "<CR>", "<Cmd>OpenFileCmd<CR><Esc>")
   end,
 })
 
@@ -151,7 +158,7 @@ vim.api.nvim_create_autocmd("User", {
   end,
 })
 
-utils.map("n", "<Space><Space>", function()
+vim.keymap.set("n", "<Space><Space>", function()
   vim.fn["ddu#start"]({ name = "floating_finder" })
 end)
 
@@ -160,19 +167,24 @@ vim.fn["ddu#custom#patch_local"]("side_filer", {
   ui = "filer",
   uiParams = {
     filer = {
+      startAutoAction = true,
+      autoAction = {
+        delay = 0,
+        name = "updatePreview",
+      },
       displayRoot = false,
       sortTreesFirst = true,
       split = "vertical",
       splitDirection = "topleft",
       statusline = false,
       winWidth = 25,
-      previewFloating = true,
-      previewSplit = "vertical",
-      previewFloatingBorder = "rounded",
-      previewFloatingTitle = "Preview",
-      previewCol = 2,
-      previewWidth = vim.go.columns - (25 + 10),
-      previewHeight = 30,
+      -- previewFloating = true,
+      previewSplit = "no",
+      -- previewFloatingBorder = "rounded",
+      -- previewFloatingTitle = "Preview",
+      -- previewCol = 2,
+      -- previewWidth = vim.go.columns - (25 + 10),
+      -- previewHeight = 30,
     },
   },
   sources = { "file" },
@@ -212,17 +224,25 @@ customAction("ui", "filer", "filerOpen", function()
   if item.isTree then
     doAction("expandItem", { mode = "toggle", isInTree = true })
   else
-    -- doAction("itemAction", { name = "open" })
-    -- doAction("itemAction", { name = "open", params = { command = "vsplit" } })
-    -- vim.cmd([[call ddu#ui#do_action('itemAction', {'name': 'open', 'params': {'command': 'wincmd p | drop'}})]])
     doAction("closePreviewWindow")
     doAction("itemAction", { name = "open", params = { command = "wincmd l | drop" } })
   end
 end)
 
-customAction("ui", "filer", "updatePreview", function()
+customAction("ui", "filer", "filerOpenAndLeave", function()
   local item = vim.fn["ddu#ui#get_item"]()
   if item.isTree then
+    return
+  else
+    doAction("closePreviewWindow")
+    doAction("itemAction", { name = "open" })
+  end
+end)
+
+customAction("ui", "filer", "updatePreview", function()
+  local item = vim.fn["ddu#ui#get_item"]()
+  local extension = vim.fn.fnamemodify(item.word, ":e")
+  if item.isTree or extension == "" then
     doAction("closePreviewWindow")
   else
     doAction("preview")
@@ -253,36 +273,21 @@ end)
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "ddu-filer",
   callback = function()
+    vim.opt.cursorline = true
     mapAction("n", "q", "quit")
     mapAction("n", "<CR>", "filerOpen")
-    mapMultiActions("n", "j", {
-      { "cursorNext" },
-      { "updatePreview" },
-    })
-    mapMultiActions("n", "k", {
-      { "cursorPrevious" },
-      { "updatePreview" },
-    })
-    mapMultiActions("n", "l", {
-      { "expandItem", { isInTree = true } },
-      { "updatePreview" },
-    })
-    mapMultiActions("n", "<S-l>", {
-      { "expandItem", { maxLevel = -1, isInTree = true } },
-      { "updatePreview" },
-    })
+    mapAction("n", "<S-l>", "filerOpenAndLeave")
+    mapAction("n", "l", "expandItem", { isInTree = true })
+    mapAction("n", "<S-l>", "expandItem", { maxLevel = -1, isInTree = true })
     mapAction("n", "h", "collapseItem")
-    mapMultiActions("n", "r", {
-      { "itemAction", { name = "rename" } },
-      { "updatePreview" },
-    })
-    -- mapAction("n", "g", "toggleGitStatus")
+    mapAction("n", "p", "togglePreview")
+    mapAction("n", "r", "itemAction", { name = "rename" })
     mapAction("n", "u", "itemAction", { name = "undo" })
-    doAction("updatePreview")
+    -- mapAction("n", "g", "toggleGitStatus")
   end,
 })
 
-utils.map("n", "<Space>f", function()
+vim.keymap.set("n", "<Space>f", function()
   local windows = vim.api.nvim_list_wins()
   for _, win in ipairs(windows) do
     local buf = vim.api.nvim_win_get_buf(win)

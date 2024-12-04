@@ -4,9 +4,19 @@ on_event = ['BufNewFile', 'BufRead']
 hooks_file = "$HOOK_DIR/hlchunk.lua"
 
 [[plugins]]
+repo = 'gen740/SmoothCursor.nvim'
+on_event = 'VimEnter'
+lua_source = '''
+  require("smoothcursor").setup({
+    type = "default",
+    cursor = "➤",
+    speed = 40,
+  })
+'''
+
+[[plugins]]
 repo = 'unblevable/quick-scope'
 on_event = ['BufNewFile', 'BufRead']
-hooks_file = "$HOOK_DIR/quick-scope.lua"
 
 [[plugins]]
 repo = 'MeanderingProgrammer/render-markdown.nvim'
@@ -15,6 +25,21 @@ on_ft = 'markdown'
 lua_source = '''
   require("render-markdown").setup({})
 '''
+
+# [[plugins]]
+# repo = 'rachartier/tiny-inline-diagnostic.nvim'
+# depends = 'nvim-lspconfig'
+# on_event = 'LspAttach'
+# lua_source = '''
+#   vim.diagnostic.config({ virtual_text = false })
+#   require('tiny-inline-diagnostic').setup({
+#     preset = "ghost",
+#     options = {
+#       multilines = true,
+#       multiple_diag_under_cursor = true,
+#     },
+#   })
+# '''
 
 # [[plugins]]
 # repo = 'atusy/tsnode-marker.nvim'
@@ -43,10 +68,13 @@ repo = 'xiyaowong/transparent.nvim'
 lazy = false
 hooks_file = '$HOOK_DIR/transparent.lua'
 
-# [[plugins]]
-# repo = 'mawkler/modicator.nvim'
-# depends = ['neofusion.nvim']
-# on_lua = ['lualine']
-# lua_source = '''
-#   require("modicator").setup({})
-# '''
+[[plugins]]
+repo = 'andersevenrud/nvim_context_vt'
+depends = ['nvim-treesitter']
+on_event = ['BufReadPre', 'BufNewFile']
+lua_source = '''
+  require("nvim_context_vt").setup({
+    prefix = "",
+    -- highlight = "CustomContextVt",
+  })
+'''

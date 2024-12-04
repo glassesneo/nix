@@ -2,14 +2,6 @@ local utils = {}
 
 ---@param mode string|string[]
 ---@param lhs string
----@param rhs string|function
----@param opts? table
-function utils.map(mode, lhs, rhs, opts)
-  vim.keymap.set(mode, lhs, rhs, opts or {})
-end
-
----@param mode string|string[]
----@param lhs string
 ---@param opts? table
 function utils.unmap(mode, lhs, opts)
   vim.keymap.del(mode, lhs, opts or {})

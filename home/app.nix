@@ -3,16 +3,16 @@
   home.packages = with pkgs; [
     devbox
     sl
-    nixpkgs-fmt
     bat
+    jq
     ripgrep
     fd
     duf
-    deno
     gitflow
     ffmpeg
     silicon
     unrar
+    lua5_4
   ];
 
   programs.git = {
@@ -53,21 +53,36 @@
         conventional_commits = true;
         filter_unconventional = true;
         commit_parsers = [
-          { message = "^feat"; group = "Features";}
-          { message = "^fix"; group = "Bug Fixes";}
-          { message = "^doc"; group = "Documentation";}
-          { message = "^perf"; group = "Performance";}
-          { message = "^refactor"; group = "Refactor";}
-          { message = "^style"; group = "Styling";}
-          { message = "^test"; group = "Testing";}
-        ];
-        tag_pattern = "[0-9].*";
-        commit_preprocessors = [
           {
-            pattern = "[🎉 ✨ 🐛 ♼ ⚡️ 🔥 💥 💬 🎨 ⚰️ ✏️ 🔒 🦺 ✅ 💡 📝 🛠️ 📄 🔖 ]\\s+";
-            replace = "";
+            message = "^feat";
+            group = "Features";
+          }
+          {
+            message = "^fix";
+            group = "Bug Fixes";
+          }
+          {
+            message = "^doc";
+            group = "Documentation";
+          }
+          {
+            message = "^perf";
+            group = "Performance";
+          }
+          {
+            message = "^refactor";
+            group = "Refactor";
+          }
+          {
+            message = "^style";
+            group = "Styling";
+          }
+          {
+            message = "^test";
+            group = "Testing";
           }
         ];
+        tag_pattern = "[0-9].*";
       };
     };
   };
@@ -168,6 +183,10 @@
     extraPackages = with pkgs; [
       # lsp
       efm-langserver
+      #typescript
+      biome
+      typescript-language-server
+      svelte-language-server
       # tree-sitter
       tree-sitter
       # denops
@@ -176,6 +195,10 @@
       gcc
       # nix
       nil
+      nixfmt-rfc-style
+      # scala
+      scalafmt
+      metals
       # lua
       lua-language-server
       stylua

@@ -1,5 +1,6 @@
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
-depends = ['ddc-source-lsp', 'ddc-source-lsp-setup']
-on_event = 'FileType'
-hooks_file = '$HOOK_DIR/lsp.lua'
+depends = ['lsp-format.nvim']
+
+[[plugins]]
+repo = 'lukas-reineke/lsp-format.nvim'

@@ -1,6 +1,6 @@
 [[plugins]]
 repo = 'Shougo/ddc.vim'
-depends = 'denops.vim'
+depends = ['denops.vim', 'nvim-lspconfig', 'ddc-source-lsp-setup']
 on_event = 'VimEnter'
 hooks_file = '$HOOK_DIR/ddc.lua'
 

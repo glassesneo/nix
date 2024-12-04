@@ -1,5 +1,5 @@
 --- lua_source {{{
-local neofusion_palette = require("neofusion.palette")
+-- local neofusion_palette = require("neofusion.palette")
 
 require("bufferline").setup({
   options = {
@@ -10,7 +10,7 @@ require("bufferline").setup({
     },
     buffer_close_icon = "",
     close_icon = "",
-    diagnostics = "nvim-lsp",
+    diagnostics = "nvim_lsp",
     diagnostics_update_on_event = true,
     color_icons = true,
     separator_style = { "", "" },
@@ -22,7 +22,11 @@ require("bufferline").setup({
       bg = "NONE",
     },
     background = {
-      -- fg = "NONE",
+      fg = "NONE",
+      bg = "NONE",
+    },
+    tab = {
+      fg = "NONE",
       bg = "NONE",
     },
     close_button = {
@@ -59,16 +63,16 @@ require("bufferline").setup({
     --   fg = "NONE",
     --   bg = "NONE",
     -- },
-    -- separator_selected = {
-    --   fg = "NONE",
-    --   bg = "NONE",
-    -- },
-    -- indicator_visible = {
-    --   fg = "NONE",
-    --   bg = "NONE",
-    -- },
+    separator_selected = {
+      fg = "NONE",
+      bg = "NONE",
+    },
+    indicator_visible = {
+      fg = "NONE",
+      bg = "NONE",
+    },
     indicator_selected = {
-      fg = neofusion_palette.bright_aqua,
+      fg = "#ffffff",
       bg = "NONE",
     },
   },

@@ -6,6 +6,7 @@ local commonSources = {
   "around",
   "rg",
   "file",
+  -- "skkeleton",
 }
 
 local commonLangSources = utils.array_concat_unique({
@@ -64,7 +65,7 @@ vim.fn["ddc#custom#patch_global"]({
         "sorter_fuzzy",
       },
       converters = fuzzyConverters,
-      minAutoCompleteLength = 1,
+      minAutoCompleteLength = 3,
       maxAutoCompleteLength = 5,
     },
     buffer = {
@@ -80,10 +81,12 @@ vim.fn["ddc#custom#patch_global"]({
     cmdline = {
       mark = "[>_]",
       forceCompletionPattern = [[\S/\S*|\.\w*]],
+      minAutoCompleteLength = 1,
     },
     ["cmdline-history"] = {
       mark = "[>_ his]",
       sorters = {},
+      minAutoCompleteLength = 1,
     },
     file = {
       mark = "[file]",
@@ -108,6 +111,7 @@ vim.fn["ddc#custom#patch_global"]({
       converters = utils.array_concat_unique({
         "converter_kind_labels",
       }, commonConverters),
+      dup = true,
     },
     ["nvim-lua"] = {
       mark = "[lua]",
@@ -136,6 +140,14 @@ vim.fn["ddc#custom#patch_global"]({
       converters = fuzzyConverters,
       minAutoCompleteLength = 6,
     },
+    skkeleton = {
+      mark = "[SKK]",
+      matchers = {},
+      sorters = {},
+      converters = {},
+      isVolatile = true,
+      minAutoCompleteLength = 1,
+    },
     treesitter = {
       mark = "[TS]",
       matchers = {
@@ -157,6 +169,7 @@ vim.fn["ddc#custom#patch_global"]({
       enableAdditionalTextEdit = true,
       enableDisplayDetail = true,
       enableResolveItem = true,
+      lspEngine = "nvim-lsp",
       snippetEngine = vim.fn["denops#callback#register"](function(body)
         luasnip.lsp_expand(body)
       end),
@@ -221,36 +234,11 @@ vim.fn["ddc#custom#patch_global"]({
   backspaceCompletion = true,
 })
 
-local filetypes = {
-  ["go"] = {},
-  ["html"] = {},
-  ["lua"] = { "nvim-lua" },
-  ["nim"] = {},
-  ["python"] = {},
-  ["rust"] = {},
-  ["tsx"] = {},
-  ["typescript"] = {},
-  ["typescriptreact"] = {},
-}
-
-for ft, extra in pairs(filetypes) do
-  if #extra == 0 then
-    vim.fn["ddc#custom#patch_filetype"]({ ft }, {
-      sources = commonLangSources,
-    })
-  else
-    local ftSources = utils.array_concat_unique(commonLangSources, extra)
-    vim.fn["ddc#custom#patch_filetype"]({ ft }, {
-      sources = ftSources,
-    })
-  end
-end
-
 -- snippet keymaps
-utils.map({ "i", "s" }, "<C-l>", function()
+vim.keymap.set({ "i", "s" }, "<C-l>", function()
   luasnip.jump(1)
 end)
-utils.map({ "i", "s" }, "<C-h>", function()
+vim.keymap.set({ "i", "s" }, "<C-h>", function()
   luasnip.jump(-1)
 end)
 
@@ -281,6 +269,294 @@ vim.fn["pum#set_local_option"]("c", {
   preview = false,
 })
 
+-- language-specific configs
+require("lsp-format").setup({})
+
+---@param client vim.lsp.Client
+---@param bufnr? number
+local lspformat_on_attach = function(client, bufnr)
+  require("lsp-format").on_attach(client, bufnr)
+end
+
+local lang_config = {
+  elm = {
+    lsp = {
+      name = "elmls",
+    },
+    efm = {
+      {
+        formatCommand = "elm-format --stdin",
+        formatStdin = true,
+      },
+    },
+  },
+  go = {
+    lsp = {
+      name = "gopls",
+    },
+    efm = {
+      {
+        formatCommand = "gofmt",
+        formatStdin = true,
+        lintCommand = "golangci-lint run",
+        lintStdin = true,
+      },
+    },
+  },
+  haskell = {
+    lsp = {
+      name = "hls",
+    },
+    efm = {
+      {
+        formatCommand = "fourmolu --stdin-input-file",
+        formatStdin = true,
+      },
+    },
+  },
+  html = {
+    lsp = {
+      name = "marksman",
+    },
+  },
+  json = {
+    lsp = {
+      name = "jsonls",
+    },
+  },
+  lua = {
+    lsp = {
+      name = "lua_ls",
+      config = {
+        settings = {
+          Lua = {
+            runtime = {
+              version = "LuaJIT",
+              pathStrict = true,
+              path = { "?.lua", "?/init.lua" },
+            },
+            workspace = {
+              library = vim.list_extend(vim.api.nvim_get_runtime_file("lua", true), {
+                "${3rd}/luv/library",
+                "${3rd}/busted/library",
+                "${3rd}/luassert/library",
+              }),
+              checkThirdParty = false,
+            },
+            hint = {
+              enable = true,
+            },
+          },
+        },
+      },
+    },
+    efm = {
+      {
+        formatCommand = "stylua --indent-type Spaces --indent-width 2 -",
+        formatStdin = true,
+      },
+    },
+    extraSources = { "nvim-lua" },
+  },
+  nim = {
+    -- lsp = {
+    --   name = "nim_langserver",
+    --   config = {
+    --     root_dir = lspconfig.util.root_pattern("*.nimble", ".git"),
+    --     settings = {
+    --       nim = {
+    --         projectMapping = {
+    --           projectFile = currentDir .. "src/" .. vim.fs.basename(currentDir) .. ".nim",
+    --           fileRegex = ".*\\.nim",
+    --         },
+    --       },
+    --     },
+    --   },
+    -- },
+    efm = {
+      {
+        formatCommand = "nph -",
+        formatStdin = true,
+      },
+    },
+  },
+  nix = {
+    lsp = {
+      name = "nil_ls",
+      config = {
+        settings = {
+          flake = {
+            autoArchive = true,
+          },
+        },
+      },
+    },
+    efm = {
+      {
+        formatCommand = "nixfmt -",
+        formatStdin = true,
+      },
+    },
+  },
+  scala = {
+    lsp = {
+      name = "metals",
+    },
+    efm = {
+      {
+        formatCommand = "scalafmt --stdin --non-interactive",
+        formatCanRange = true,
+        formatStdin = true,
+      },
+    },
+  },
+  svelte = {
+    lsp = {
+      name = "svelte",
+      config = {
+        on_attach = lspformat_on_attach,
+        settings = {
+          typescript = {
+            inlayHints = {
+              parameterNames = { enabled = "all" },
+              parameterTypes = { enabled = true },
+              variableTypes = { enabled = true },
+              propertyDeclarationTypes = { enabled = true },
+              functionLikeReturnTypes = { enabled = true },
+              enumMemberValues = { enabled = true },
+            },
+          },
+        },
+      },
+    },
+  },
+  toml = {
+    lsp = {
+      name = "taplo",
+    },
+    efm = {
+      {
+        formatCommand = "taplo format -",
+        formatStdin = true,
+      },
+    },
+  },
+  typescript = {
+    lsp = {
+      name = "biome",
+    },
+    efm = {
+      {
+        formatCommand = "biome check --apply --stdin-file-path '${INPUT}'",
+        formatStdin = true,
+        rootMarkers = { "rome.json", "biome.json", "package.json" },
+      },
+    },
+  },
+  typst = {
+    lsp = {
+      name = "typst_lsp",
+    },
+  },
+  zig = {
+    lsp = {
+      name = "zls",
+      config = {
+        settings = {
+          zls = {
+            enable_inlay_hints = true,
+            inlay_hints_show_builtin = true,
+            inlay_hints_exclude_single_argument = true,
+            inlay_hints_hide_redundant_param_names = false,
+            inlay_hints_hide_redundant_param_names_last_token = false,
+          },
+        },
+      },
+    },
+    efm = {
+      {
+        formatCommand = "zig fmt --stdin",
+        formatStdin = true,
+      },
+    },
+  },
+}
+
+require("ddc_source_lsp_setup").setup({
+  override_capabilities = true,
+  respect_trigger = true,
+})
+
+local lspconfig = require("lspconfig")
+local efm_filetypes = {}
+local efm_languages = {}
+
+---@param lsp { name: string, config?: table, format?: boolean }
+local load_language_config = function(lsp)
+  if next(lsp) == nil then
+    return
+  end
+  lspconfig[lsp.name].setup(lsp.config or {})
+end
+
+for ft, config in pairs(lang_config) do
+  vim.fn["ddc#custom#patch_filetype"]({ ft }, {
+    sources = utils.array_concat_unique(commonLangSources, config.extraSources or {}),
+  })
+  load_language_config(config.lsp or {})
+  table.insert(efm_filetypes, ft)
+  efm_languages[ft] = config.efm or {}
+end
+
+lspconfig.efm.setup({
+  on_attach = lspformat_on_attach,
+  init_options = {
+    documentFormatting = true,
+    documentRangeFormatting = true,
+  },
+  single_file_support = true,
+  filetypes = efm_filetypes,
+  settings = {
+    rootMarkers = {
+      ".git/",
+    },
+    languages = efm_languages,
+  },
+})
+
+lspconfig.denols.setup({
+  settings = {
+    deno = {
+      inlayHints = {
+        parameterNames = { enabled = "all", suppressWhenArgumentMatchesName = true },
+        parameterTypes = { enabled = true },
+        variableTypes = { enabled = true, suppressWhenTypeMatchesName = true },
+        propertyDeclarationTypes = { enabled = true },
+        functionLikeReturnTypes = { enable = true },
+        enumMemberValues = { enabled = true },
+      },
+    },
+  },
+  root_dir = lspconfig.util.root_pattern("deno.json", "dpp.ts"),
+  init_options = {
+    lint = true,
+    unstable = true,
+    suggest = {
+      imports = {
+        hosts = {
+          ["https://deno.land"] = true,
+          ["https://cdn.nest.land"] = true,
+          ["https://crux.land"] = true,
+        },
+      },
+    },
+  },
+})
+
+lspconfig.ts_ls.setup({
+  root_dir = lspconfig.util.root_pattern("package.json"),
+})
+
 -- completion keymaps
 local pum_forward = function()
   vim.fn["pum#map#insert_relative"](1, "loop")
@@ -298,21 +574,21 @@ local pum_confirm = function()
   vim.fn["pum#map#confirm"]()
 end
 
-utils.map({ "i" }, "<C-n>", pum_forward)
-utils.map({ "i" }, "<C-p>", pum_backward)
+vim.keymap.set({ "i" }, "<C-n>", pum_forward)
+vim.keymap.set({ "i" }, "<C-p>", pum_backward)
 
-utils.map({ "t" }, "<C-n>", pum_forward_term)
-utils.map({ "t" }, "<C-p>", pum_backward_term)
+vim.keymap.set({ "t" }, "<C-n>", pum_forward_term)
+vim.keymap.set({ "t" }, "<C-p>", pum_backward_term)
 
-utils.map({ "i", "t" }, "<C-y>", pum_confirm)
+vim.keymap.set({ "i", "t" }, "<C-y>", pum_confirm)
 
-utils.map("n", ":", "<Cmd>CommandlinePre<CR>:")
-utils.map("n", "/", "<Cmd>CommandlinePre<CR>/")
+vim.keymap.set("n", ":", "<Cmd>CommandlinePre<CR>:")
+-- vim.keymap.set("n", "/", "<Cmd>CommandlinePre<CR>/")
 
 vim.api.nvim_create_user_command("CommandlinePre", function()
-  utils.map("c", "<C-n>", pum_forward)
-  utils.map("c", "<C-p>", pum_backward)
-  utils.map("c", "<C-y>", pum_confirm)
+  vim.keymap.set("c", "<C-n>", pum_forward)
+  vim.keymap.set("c", "<C-p>", pum_backward)
+  vim.keymap.set("c", "<C-y>", pum_confirm)
 
   vim.api.nvim_create_autocmd({ "User" }, {
     pattern = "DDCCmdlineLeave",

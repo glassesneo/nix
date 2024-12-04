@@ -1,3 +1,10 @@
 [[plugins]]
 repo = 'jghauser/mkdir.nvim'
 on_event = ['BufNewFile']
+
+[[plugins]]
+repo = 'nacro90/numb.nvim'
+on_event = ['BufRead', 'BufNewFile']
+lua_source = '''
+  require("numb").setup()
+'''

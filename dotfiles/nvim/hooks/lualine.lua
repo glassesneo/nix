@@ -16,8 +16,8 @@ local total_lines = function()
   return vim.fn.line("$") .. " lines"
 end
 
-local neofusion_lualine = require("neofusion.lualine")
-local neofusion_palette = require("neofusion.palette")
+-- local neofusion_lualine = require("neofusion.lualine")
+-- local palette = require("neofusion.palette")
 
 require("lualine").setup({
   options = {
@@ -26,7 +26,7 @@ require("lualine").setup({
     section_separators = {},
     -- component_separators = {},
     globalstatus = true,
-    theme = neofusion_lualine,
+    theme = "retrowave",
     disabled_filetypes = {
       "ddu-filer",
       "ddu-ff",
@@ -48,12 +48,13 @@ require("lualine").setup({
           },
         },
         color = {
-          fg = neofusion_palette.bright_aqua,
+          -- fg = palette.bright_aqua,
           bg = "NONE",
         },
       },
     },
     lualine_b = {
+      { "lsp-status", color = { bg = "NONE" } },
       {
         "filename",
         newfile_status = true,
@@ -69,14 +70,7 @@ require("lualine").setup({
         },
       },
     },
-    lualine_c = {
-      {
-        "navic",
-        color = {
-          bg = "NONE",
-        },
-      },
-    },
+    lualine_c = {},
     lualine_x = {
       {
         "encoding",
@@ -105,8 +99,8 @@ require("lualine").setup({
         "datetime",
         style = "%m/%d(%A) %H:%M",
         color = {
+          -- fg = palette.bright_aqua,
           bg = "NONE",
-          fg = neofusion_palette.bright_aqua,
         },
       },
     },
@@ -125,13 +119,20 @@ require("lualine").setup({
         },
         draw_empty = true,
         color = {
+          -- fg = palette.bright_aqua,
           bg = "NONE",
-          fg = neofusion_palette.bright_aqua,
         },
       },
     },
     lualine_b = {},
-    lualine_c = {},
+    lualine_c = {
+      {
+        "navic",
+        color = {
+          bg = "NONE",
+        },
+      },
+    },
     lualine_x = {
       {
         "diff",
@@ -141,13 +142,19 @@ require("lualine").setup({
           removed = " ",
         },
         source = diff_source,
+        color = {
+          bg = "NONE",
+        },
       },
     },
     lualine_y = {},
     lualine_z = {
       {
         total_lines,
-        color = { bg = "#fad600", fg = neofusion_palette.dark4 },
+        color = {
+          -- fg = palette.dark4
+          bg = "#fad600",
+        },
       },
     },
   },
@@ -165,6 +172,10 @@ require("lualine").setup({
         },
         separator = { left = "", right = "" },
         draw_empty = true,
+        color = {
+          -- fg = palette.bright_aqua,
+          bg = "NONE",
+        },
       },
     },
     lualine_b = {},
@@ -184,7 +195,7 @@ require("lualine").setup({
     lualine_z = {
       {
         total_lines,
-        color = { fg = neofusion_palette.dark4 },
+        -- color = { fg = palette.dark4 },
       },
     },
   },

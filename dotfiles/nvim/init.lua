@@ -70,3 +70,25 @@ end, { nargs = "*" })
 vim.api.nvim_create_user_command("DppCheckUpdate", "call dpp#async_ext_action('installer', 'checkNotUpdated')", {})
 
 vim.api.nvim_create_user_command("DppClearState", "call dpp#clear_state()", {})
+
+vim.cmd("filetype plugin on")
+
+--- lsp
+vim.diagnostic.config({ severity_sort = true })
+
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = "rounded",
+})
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    if client == nil then
+      return
+    end
+
+    if client.supports_method("textDocument/inlayHint") then
+      vim.lsp.inlay_hint.enable()
+    end
+  end,
+})

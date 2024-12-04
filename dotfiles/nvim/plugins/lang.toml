@@ -1,3 +1,7 @@
+# [[plugins]]
+# repo = 'alaviss/nim.nvim'
+# on_ft = ['nim', 'nims', 'nimble']
+
 [[plugins]]
-repo = 'alaviss/nim.nvim'
-on_ft = ['nim', 'nims', 'nimble']
+repo = 'ray-x/go.nvim'
+on_ft = ['go', 'gomod', 'gowork', 'gotmpl']
