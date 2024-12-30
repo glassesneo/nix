@@ -1,0 +1,164 @@
+{
+  "version": "4",
+  "specifiers": {
+    "jsr:@core/unknownutil@4.3": "4.3.0",
+    "jsr:@core/unknownutil@^4.3.0": "4.3.0",
+    "jsr:@denops/std@7.1": "7.1.1",
+    "jsr:@denops/std@7.3": "7.3.2",
+    "jsr:@denops/std@7.4": "7.4.0",
+    "jsr:@lambdalisue/itertools@^1.1.2": "1.1.2",
+    "jsr:@lambdalisue/unreachable@^1.0.1": "1.0.1",
+    "jsr:@shougo/ddc-vim@^9.1.0": "9.1.0",
+    "jsr:@shougo/ddu-ui-ff@^1.6.0": "1.6.0",
+    "jsr:@shougo/ddu-ui-filer@^1.5.0": "1.5.0",
+    "jsr:@shougo/ddu-vim@6.4": "6.4.0",
+    "jsr:@shougo/ddu-vim@9.0": "9.0.1",
+    "jsr:@shougo/ddu-vim@^9.3.0": "9.3.0",
+    "jsr:@shougo/dpp-ext-lazy@^1.5.0": "1.5.0",
+    "jsr:@shougo/dpp-vim@3.0": "3.0.0",
+    "jsr:@shougo/dpp-vim@^4.1.0": "4.1.0",
+    "jsr:@std/assert@1.0": "1.0.10",
+    "jsr:@std/assert@~1.0.2": "1.0.10",
+    "jsr:@std/internal@^1.0.5": "1.0.5",
+    "jsr:@std/path@1.0": "1.0.8",
+    "jsr:@std/path@~1.0.1": "1.0.8",
+    "jsr:@std/path@~1.0.2": "1.0.8",
+    "jsr:@std/semver@1": "1.0.3",
+    "jsr:@std/ulid@1": "1.0.0"
+  },
+  "jsr": {
+    "@core/unknownutil@4.3.0": {
+      "integrity": "538a3687ffa81028e91d148818047df219663d0da671d906cecd165581ae55cc"
+    },
+    "@denops/std@7.1.1": {
+      "integrity": "9178027fc9192034842ac4d8d7219ce65ea80cb115b722e681e5c3630b503cb8",
+      "dependencies": [
+        "jsr:@core/unknownutil@^4.3.0",
+        "jsr:@std/semver",
+        "jsr:@std/ulid"
+      ]
+    },
+    "@denops/std@7.3.2": {
+      "integrity": "ff764883927dc1ad2edaa29cce795d02afbe241b49826ebfed03154d1b4e46d5",
+      "dependencies": [
+        "jsr:@core/unknownutil@^4.3.0",
+        "jsr:@lambdalisue/itertools",
+        "jsr:@lambdalisue/unreachable",
+        "jsr:@std/semver",
+        "jsr:@std/ulid"
+      ]
+    },
+    "@denops/std@7.4.0": {
+      "integrity": "6d7ae66af0286a440c14c0ba096b4336697bcd69e83e0fce21a41fb3dec10d65",
+      "dependencies": [
+        "jsr:@core/unknownutil@^4.3.0",
+        "jsr:@lambdalisue/itertools",
+        "jsr:@lambdalisue/unreachable",
+        "jsr:@std/semver",
+        "jsr:@std/ulid"
+      ]
+    },
+    "@lambdalisue/itertools@1.1.2": {
+      "integrity": "1b8c45a5ab7102a3ff1aa64c8ec0bdb12aee845bec5bf85458ed83446125587a"
+    },
+    "@lambdalisue/unreachable@1.0.1": {
+      "integrity": "24b0743775e92ea0d076beaf0869bfbe4708054ac570742628684fb35ccda0d4"
+    },
+    "@shougo/ddc-vim@9.1.0": {
+      "integrity": "3a221b0442a3c2ae164e8ace9e9fc3f2a4f6ea5094c75e21741bfd8a690d7d0e",
+      "dependencies": [
+        "jsr:@core/unknownutil@4.3",
+        "jsr:@denops/std@7.4",
+        "jsr:@std/assert@~1.0.2"
+      ]
+    },
+    "@shougo/ddu-ui-ff@1.6.0": {
+      "integrity": "cd2c73ff5a44486112ab69faa3b1c6c8eb924b07fa5736f0e2440d62c23f2290",
+      "dependencies": [
+        "jsr:@core/unknownutil@4.3",
+        "jsr:@denops/std@7.4",
+        "jsr:@shougo/ddu-vim@9.0",
+        "jsr:@std/assert@~1.0.2",
+        "jsr:@std/path@~1.0.2"
+      ]
+    },
+    "@shougo/ddu-ui-filer@1.5.0": {
+      "integrity": "e087c4882632b5fa8ff46337b585088718c5192401b853c713647254b5d5c58b",
+      "dependencies": [
+        "jsr:@core/unknownutil@4.3",
+        "jsr:@denops/std@7.3",
+        "jsr:@shougo/ddu-vim@6.4",
+        "jsr:@std/assert@1.0",
+        "jsr:@std/path@1.0",
+        "jsr:@std/path@~1.0.1"
+      ]
+    },
+    "@shougo/ddu-vim@6.4.0": {
+      "integrity": "017a23b29a81fc3816c02a00bee4a420ee1c58073440a857b09c05750d5493e2",
+      "dependencies": [
+        "jsr:@std/path@~1.0.2"
+      ]
+    },
+    "@shougo/ddu-vim@9.0.1": {
+      "integrity": "1b3d44fe419ea26f5cb37bfbaf9dbf86b6e50f25996e4a728e49175b971a78a1",
+      "dependencies": [
+        "jsr:@std/path@~1.0.2"
+      ]
+    },
+    "@shougo/ddu-vim@9.3.0": {
+      "integrity": "673daec122324f8f6eaf0896500a545d5d208d40bcb31bb4d5cf3fc0a426d368",
+      "dependencies": [
+        "jsr:@std/path@~1.0.2"
+      ]
+    },
+    "@shougo/dpp-ext-lazy@1.5.0": {
+      "integrity": "ebd9741e2cecf3324a8dc2a3a8cd945b35d34f312ae3cd06a349c230b94e6ff1",
+      "dependencies": [
+        "jsr:@denops/std@7.1",
+        "jsr:@shougo/dpp-vim@3.0"
+      ]
+    },
+    "@shougo/dpp-vim@3.0.0": {
+      "integrity": "0c5e5ac938f8ed464e224dfa530d187fd9ca41a370d7b9b3c8b66cd0ab983ad2",
+      "dependencies": [
+        "jsr:@std/assert@~1.0.2",
+        "jsr:@std/path@~1.0.2"
+      ]
+    },
+    "@shougo/dpp-vim@4.1.0": {
+      "integrity": "0b09573ccba40d4efee270cc7259ea1fb29565aa9475029841b8a1fed1ef0d8c",
+      "dependencies": [
+        "jsr:@std/assert@~1.0.2",
+        "jsr:@std/path@~1.0.2"
+      ]
+    },
+    "@std/assert@1.0.10": {
+      "integrity": "59b5cbac5bd55459a19045d95cc7c2ff787b4f8527c0dd195078ff6f9481fbb3",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/internal@1.0.5": {
+      "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
+    },
+    "@std/path@1.0.8": {
+      "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
+    },
+    "@std/semver@1.0.3": {
+      "integrity": "7c139c6076a080eeaa4252c78b95ca5302818d7eafab0470d34cafd9930c13c8"
+    },
+    "@std/ulid@1.0.0": {
+      "integrity": "d41c3d27a907714413649fee864b7cde8d42ee68437d22b79d5de4f81d808780"
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@shougo/ddc-vim@^9.1.0",
+      "jsr:@shougo/ddu-ui-ff@^1.6.0",
+      "jsr:@shougo/ddu-ui-filer@^1.5.0",
+      "jsr:@shougo/ddu-vim@^9.3.0",
+      "jsr:@shougo/dpp-ext-lazy@^1.5.0",
+      "jsr:@shougo/dpp-vim@^4.1.0"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 [[plugins]]
 repo = 'Shougo/ddu.vim'
-depends = 'denops.vim'
+depends = ['denops.vim', 'vim-artemis']
 hooks_file = '$HOOK_DIR/ddu.lua'
 
 [[plugins]]

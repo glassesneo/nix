@@ -23,8 +23,6 @@ function utils.array_concat(a, b)
   return result
 end
 
-function utils.aaa() end
-
 ---@generic T
 ---@param a T[]
 ---@param b T[]

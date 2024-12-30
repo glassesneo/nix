@@ -120,27 +120,20 @@
 
   # services.sketchybar = {
   #   enable = true;
-  #   config = ''
-  #     #!/Users/neo/.nix-profile/bin/lua
-
-  #     sketchybar.add_item("hello", {
-  #       position = "center",
-  #       label = { text = "Hello, World!" }
-  #     })
-
-  #     sketchybar.update()
-  #   '';
-  #   extraPackages = [
-  #     pkgs.lua5_4
-  #     pkgs.jq
-  #   ];
-  # };
-
-  # launchd.user.agents.sketchybar = {
-  #   serviceConfig = {
-  #     StandardOutPath = "/tmp/sketchybar.log";
-  #     StandardErrorPath = "/tmp/sketchybar.log";
-  #   };
+  # config = ''
+  #   #!/Users/neo/.nix-profile/bin/lua
+  #
+  #   sketchybar.add_item("hello", {
+  #     position = "center",
+  #     label = { text = "Hello, World!" }
+  #   })
+  #
+  #   sketchybar.update()
+  # '';
+  # extraPackages = [
+  #   pkgs.lua5_4
+  #   pkgs.jq
+  # ];
   # };
 
   # The apps installed by homebrew are not managed by nix, and not reproducible!
@@ -169,6 +162,7 @@
       "canva"
       "chatgpt"
       "discord"
+      "ghostty"
       "hot"
       "karabiner-elements"
       "keycastr"
@@ -183,6 +177,7 @@
       "warp"
       "wave"
       "zoom"
+      # "sketchybar"
     ];
 
     masApps = {

@@ -1,7 +1,8 @@
 --- lua_add {{{
-local doAction = vim.fn["ddu#ui#do_action"]
-local multiActions = vim.fn["ddu#ui#multi_actions"]
-local customAction = vim.fn["ddu#custom#action"]
+local artemis = require("artemis")
+local doAction = artemis.fn.ddu.ui.do_action
+local multiActions = artemis.fn.ddu.ui.multi_actions
+local customAction = artemis.fn.ddu.custom.action
 
 ---@param mode string|string[]
 ---@param key string
@@ -38,7 +39,7 @@ local previewExcludeFileTypes = {
 }
 
 -- ui-ff
-vim.fn["ddu#custom#patch_local"]("floating_finder", {
+artemis.fn.ddu.custom.patch_local("floating_finder", {
   ui = "ff",
   uiParams = {
     ff = {
@@ -107,7 +108,7 @@ vim.fn["ddu#custom#patch_local"]("floating_finder", {
 })
 
 customAction("ui", "ff", "select", function()
-  local item = vim.fn["ddu#ui#get_item"]()
+  local item = artemis.fn.ddu.ui.get_item()
   if item.isTree then
     doAction("itemAction", { name = "narrow" })
   else
@@ -116,7 +117,7 @@ customAction("ui", "ff", "select", function()
 end)
 
 customAction("ui", "ff", "vsOpen", function()
-  local item = vim.fn["ddu#ui#get_item"]()
+  local item = artemis.fn.ddu.ui.get_item()
   if item.isTree then
     vim.notify("The item is not a file.", vim.log.levels.ERROR)
   else
@@ -139,7 +140,7 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("User", {
   pattern = "Ddu:ui:ff:openFilterWindow",
   callback = function()
-    vim.fn["ddu#ui#ff#save_cmaps"]({ "<C-n>", "<C-p>", "<CR>" })
+    artemis.fn.ddu.ui.ff.save_cmaps({ "<C-n>", "<C-p>", "<CR>" })
     mapAction("c", "<C-n>", "cursorNext", { loop = true })
     mapAction("c", "<C-p>", "cursorPrevious", { loop = true })
     vim.keymap.set("c", "<CR>", "<Cmd>OpenFileCmd<CR><Esc>")
@@ -154,16 +155,16 @@ vim.api.nvim_create_autocmd("User", {
   pattern = "Ddu:ui:ff:closeFilterWindow",
   callback = function()
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-c>", true, true, true), "n", false)
-    vim.fn["ddu#ui#ff#restore_cmaps"]()
+    artemis.fn.ddu.ui.ff.restore_cmaps()
   end,
 })
 
 vim.keymap.set("n", "<Space><Space>", function()
-  vim.fn["ddu#start"]({ name = "floating_finder" })
+  artemis.fn.ddu.start({ name = "floating_finder" })
 end)
 
 -- ddu-filer
-vim.fn["ddu#custom#patch_local"]("side_filer", {
+artemis.fn.ddu.custom.patch_local("side_filer", {
   ui = "filer",
   uiParams = {
     filer = {
@@ -220,7 +221,7 @@ vim.fn["ddu#custom#patch_local"]("side_filer", {
 })
 
 customAction("ui", "filer", "filerOpen", function()
-  local item = vim.fn["ddu#ui#get_item"]()
+  local item = artemis.fn.ddu.ui.get_item()
   if item.isTree then
     doAction("expandItem", { mode = "toggle", isInTree = true })
   else
@@ -230,7 +231,7 @@ customAction("ui", "filer", "filerOpen", function()
 end)
 
 customAction("ui", "filer", "filerOpenAndLeave", function()
-  local item = vim.fn["ddu#ui#get_item"]()
+  local item = artemis.fn.ddu.ui.get_item()
   if item.isTree then
     return
   else
@@ -240,7 +241,7 @@ customAction("ui", "filer", "filerOpenAndLeave", function()
 end)
 
 customAction("ui", "filer", "updatePreview", function()
-  local item = vim.fn["ddu#ui#get_item"]()
+  local item = artemis.fn.ddu.ui.get_item()
   local extension = vim.fn.fnamemodify(item.word, ":e")
   if item.isTree or extension == "" then
     doAction("closePreviewWindow")
@@ -250,7 +251,7 @@ customAction("ui", "filer", "updatePreview", function()
 end)
 
 local toggleGitStatus = function()
-  local current = vim.fn["ddu#custom#get_current"](vim.b.ddu_ui_name)
+  local current = artemis.fn.ddu.custom.get_current(vim.b.ddu_ui_name)
   local converters = current["sourceOptions"]["file"]["converters"]
   if #converters == 0 then
     return { "converter_git_status" }
@@ -297,6 +298,6 @@ vim.keymap.set("n", "<Space>f", function()
       return
     end
   end
-  vim.fn["ddu#start"]({ name = "side_filer" })
+  artemis.fn.ddu.start({ name = "side_filer" })
 end)
 --- }}}

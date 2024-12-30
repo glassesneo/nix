@@ -18,6 +18,21 @@ on_event = 'VimEnter'
 hooks_file = "$HOOK_DIR/fidget.lua"
 
 [[plugins]]
+repo = 'MunifTanjim/nui.nvim'
+
+[[plugins]]
+repo = 'folke/noice.nvim'
+depends = ['nui.nvim', 'nvim-notify', 'nvim-treesitter']
+on_event = 'VimEnter'
+lua_source = '''
+  require('noice').setup({
+    messages = {
+      enabled = false,
+    },
+  })
+'''
+
+[[plugins]]
 repo = 'matsui54/denops-popup-preview.vim'
 depends = 'denops.vim'
 on_event = 'LspAttach'

@@ -13,6 +13,9 @@
     silicon
     unrar
     lua5_4
+    zoxide
+    uv
+    imagemagick
   ];
 
   programs.git = {
@@ -174,6 +177,9 @@
         disabled = false;
         show_always = true;
       };
+      cmd_duration = {
+        show_notifications = true;
+      };
     };
   };
 
@@ -187,6 +193,7 @@
       biome
       typescript-language-server
       svelte-language-server
+      tailwindcss-language-server
       # tree-sitter
       tree-sitter
       # denops
@@ -206,6 +213,12 @@
       taplo
       # markdown
       marksman
+      # python
+      pylyzer
+      ruff
+      # kotlin
+      kotlin-language-server
+      ktfmt
     ];
     withNodeJs = false;
     withPython3 = false;

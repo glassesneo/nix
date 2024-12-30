@@ -1,0 +1,7 @@
+keybind = cmd+t=new_tab
+keybind = cmd+shift+]=next_tab
+keybind = cmd+shift+[=previous_tab
+font-family = "UDEV Gothic NFLG"
+font-size = 17
+theme = Elementary
+window-inherit-working-directory = false

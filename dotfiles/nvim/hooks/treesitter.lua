@@ -1,11 +1,13 @@
 --- lua_source {{{
 require("nvim-treesitter.configs").setup({
   ensure_installed = {
+    "bash",
     "css",
     "elm",
     "gitignore",
     "haskell",
     "html",
+    "json",
     "lua",
     "nim",
     "nim_format_string",

@@ -1,4 +1,22 @@
 [[plugins]]
+repo = 'tpope/vim-eunuch'
+on_event = 'InsertEnter'
+on_cmd = [
+  'Remove',
+  'Delete',
+  'Move',
+  'Chmod',
+  'Mkdir',
+  'Cfind',
+  'Clocate',
+  'Lfind',
+  'Llocate',
+  'Wall',
+  'SudoWrite',
+  'SudoEdit',
+]
+
+[[plugins]]
 repo = 'jghauser/mkdir.nvim'
 on_event = ['BufNewFile']
 

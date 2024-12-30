@@ -21,6 +21,7 @@
       text = ''
         # Commit type
         # build: Changes that affect the build system or external dependencies
+        # chore: Changes that doesn't affect the source code itself
         # ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
         # docs: Documentation only changes
         # feat: A new feature

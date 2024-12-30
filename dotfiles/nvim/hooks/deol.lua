@@ -1,5 +1,6 @@
 --- lua_source {{{
 local height = (vim.go.lines - vim.go.lines % 3) / 3
+local artemis = require("artemis")
 
 -- vim.g["deol#floating_border"] = "rounded"
 vim.keymap.set("n", "<Leader>d", function()
@@ -12,7 +13,7 @@ vim.keymap.set("n", "<Leader>d", function()
       return
     end
   end
-  vim.fn["deol#start"]({
+  artemis.fn.deol.start({
     split = "horizontal",
     start_insert = false,
     toggle = false,

@@ -33,6 +33,7 @@ lua_source = '''
 
 [[plugins]]
 repo = 'cohama/lexima.vim'
+depends = ['vim-artemis']
 on_event = ['InsertEnter']
 hooks_file = "$HOOK_DIR/lexima.lua"
 
@@ -80,6 +81,7 @@ lua_source = '''
     languages = {
       nim = "# %s",
       toml = "# %s",
+      v = "// %s",
     },
   })
   vim.opt.updatetime = 100
