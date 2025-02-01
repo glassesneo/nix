@@ -7,7 +7,6 @@ import type {
   Ext as TomlExt,
   Params as TomlParams,
 } from "jsr:@shougo/dpp-ext-toml@~1.3.0";
-import { mergeFtplugins } from "jsr:@shougo/dpp-vim@3.0/utils";
 import {
   BaseConfig,
   type ConfigReturn,
@@ -19,6 +18,7 @@ import type {
   ExtOptions,
   Plugin,
 } from "jsr:@shougo/dpp-vim@~4.1.0/types";
+import { mergeFtplugins } from "jsr:@shougo/dpp-vim@~4.1.0/utils";
 
 import { expandGlob } from "jsr:@std/fs@~1.0.0/expand-glob";
 
@@ -60,9 +60,10 @@ export class Config extends BaseConfig {
       const tomlPromises = [
         { name: "colortheme.toml", lazy: true },
         { name: "bypass.toml", lazy: true },
-        { name: "dpp.toml", lazy: false },
+        { name: "dpp.toml", lazy: true },
         { name: "depends.toml", lazy: true },
         { name: "ddc.toml", lazy: true },
+        // { name: "ddt.toml", lazy: true },
         { name: "ddu.toml", lazy: false },
         { name: "editing.toml", lazy: true },
         { name: "external.toml", lazy: true },

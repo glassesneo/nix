@@ -5,7 +5,8 @@ import {
 
 export class Config extends BaseConfig {
   override async config(args: ConfigArguments): Promise<void> {
-    const commonSources = ["around", "rg", "file"];
+    const commonSources = ["around", "rg", "file", "skkeleton"];
+    const commonLangSources = ["lsp", "denippet"].concat(commonSources);
     const headMatchers = ["matcher_head", "matcher_prefix"];
     const commonConverters = [
       "converter_truncate_abbr",
@@ -36,6 +37,7 @@ export class Config extends BaseConfig {
           converters: commonConverters,
           minAutoCompleteLength: 3,
           ignoreCase: true,
+          enabledIf: "!skkeleton#is_enabled()",
         },
         around: {
           mark: "[around]",
@@ -59,6 +61,13 @@ export class Config extends BaseConfig {
           mark: "[>_] his",
           sorters: [],
           minAutoCompleteLength: 1,
+        },
+        denippet: {
+          mark: "[snip]",
+          dup: "keep",
+          matchers: headMatchers,
+          sorters: ["sorter_rank"],
+          converters: [],
         },
         file: {
           mark: "[file]",
@@ -93,6 +102,14 @@ export class Config extends BaseConfig {
           converters: fuzzyConverters,
           minAutoCompleteLength: 6,
         },
+        "shell-native": {
+          mark: "[sh]",
+          matchers: headMatchers,
+          sorters: ["sorter_rank"],
+          converters: commonConverters,
+          isVolatile: true,
+          forceCompletionPattern: "\\S/\\S*",
+        },
         skkeleton: {
           mark: "[SKK]",
           matchers: [],
@@ -119,10 +136,12 @@ export class Config extends BaseConfig {
           enableMatchLabel: true,
           enableResolveItem: true,
           lspEngine: "nvim-lsp",
-          // wip -- consider switching to denippet.vim
-          // snippetEngine: async (body: string) => {
-          //   await luaeval(args.denops, `require'luasnip'.lsp_expand(${body})`);
-          // },
+          snippetEngine: async (body: string) => {
+            await args.denops.call("denippet#anonymous", body);
+          },
+        },
+        "shell-native": {
+          shell: "zsh",
         },
       },
       postFilters: ["postfilter_score"],
@@ -178,6 +197,41 @@ export class Config extends BaseConfig {
         },
       },
       backspaceCompletion: true,
+    });
+
+    const enabledFiletypes = [
+      "elm",
+      "lua",
+      "nim",
+      "nix",
+      "python",
+      "scala",
+      "sql",
+      "mysql",
+      "svelte",
+      "toml",
+      "typescript",
+      "typescriptreact",
+      "javascript",
+      "kotlin",
+      "v",
+      "vsh",
+      "vv",
+      "zig",
+      "zir",
+    ];
+    for (const ft of enabledFiletypes) {
+      args.contextBuilder.patchFiletype(ft, { sources: commonLangSources });
+    }
+
+    args.contextBuilder.patchFiletype("deol", {
+      specialBufferCompletion: true,
+      sources: ["shell-native"].concat(commonSources),
+      sourceOptions: {
+        _: {
+          keywordPattern: "[0-9a-zA-Z_./#:-]*",
+        },
+      },
     });
     await Promise.resolve();
   }

@@ -94,6 +94,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 -- debug
-vim.opt.runtimepath:append("~/Desktop/dev/project/vim-plugin/myplace.vim")
+vim.opt.runtimepath:append("~/Desktop/dev/project/vim-plugin/defined.vim")
 
-vim.g["denops#debug"] = 1
+-- vim.g["denops#debug"] = 1

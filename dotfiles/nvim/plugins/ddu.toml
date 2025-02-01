@@ -1,6 +1,7 @@
 [[plugins]]
 repo = 'Shougo/ddu.vim'
 depends = ['denops.vim', 'vim-artemis']
+on_event = 'CursorHold'
 hooks_file = '$HOOK_DIR/ddu.lua'
 
 [[plugins]]
@@ -29,11 +30,11 @@ repo = 'Shougo/ddu-source-action'
 on_source = 'ddu.vim'
 
 [[plugins]]
-repo = 'shun/ddu-source-buffer'
-on_source = 'ddu.vim'
+repo = 'Shougo/ddu-source-file_old'
 
 [[plugins]]
-repo = 'Shougo/ddu-source-file_old'
+repo = 'shun/ddu-source-buffer'
+on_source = 'ddu.vim'
 
 [[plugins]]
 repo = 'kamecha/ddu-source-window'

@@ -16,6 +16,10 @@
     zoxide
     uv
     imagemagick
+    vim-startuptime
+    zenn-cli
+    btop
+    mactop
   ];
 
   programs.git = {
@@ -189,6 +193,7 @@
     extraPackages = with pkgs; [
       # lsp
       efm-langserver
+      vim-language-server
       #typescript
       biome
       typescript-language-server
@@ -200,6 +205,8 @@
       deno
       # tree-sitter
       gcc
+      # nim
+      nimlangserver
       # nix
       nil
       nixfmt-rfc-style
@@ -219,6 +226,8 @@
       # kotlin
       kotlin-language-server
       ktfmt
+      # zig
+      zls
     ];
     withNodeJs = false;
     withPython3 = false;

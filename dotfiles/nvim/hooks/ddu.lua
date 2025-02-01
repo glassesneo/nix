@@ -28,84 +28,18 @@ local function mapMultiActions(mode, key, actionTable)
 end
 
 -- wip
-local previewExcludeFileTypes = {
-  "mp3",
-  "mp4",
-  "wav",
-  "png",
-  "jpeg",
-  "jpg",
-  "bmp",
-}
+-- local previewExcludeFileTypes = {
+--   "mp3",
+--   "mp4",
+--   "wav",
+--   "png",
+--   "jpeg",
+--   "jpg",
+--   "bmp",
+-- }
 
 -- ui-ff
-artemis.fn.ddu.custom.patch_local("floating_finder", {
-  ui = "ff",
-  uiParams = {
-    ff = {
-      startAutoAction = true,
-      autoAction = {
-        delay = 0,
-        name = "preview",
-      },
-      split = "floating",
-      statusline = false,
-      floatingBorder = "rounded",
-      prompt = "Search: ",
-      winRow = (vim.go.lines - vim.go.lines % 2) / 2 - 9,
-      previewFloating = true,
-      previewFloatingBorder = "rounded",
-      previewFloatingTitle = "Preview",
-      previewWidth = (vim.go.columns - vim.go.columns % 2) / 2,
-      -- inputFunc = function(prompt, default)
-      --   default = default or ""
-      --   local result = nil
-      --   vim.ui.input({ prompt = prompt, default = default }, function(input)
-      --     result = input or default
-      --   end)
-      --   return result
-      -- end,
-    },
-  },
-  sources = {
-    "file_rec",
-    -- "file_old",
-  },
-  sourceOptions = {
-    ["_"] = {
-      matchers = {
-        "matcher_substring",
-        "matcher_ignore_files",
-      },
-      sorters = {
-        "sorter_alpha",
-      },
-      converters = {},
-      columns = {
-        "icon_filename",
-      },
-    },
-  },
-  sourceParams = {
-    file_rec = {
-      ignoredDirectories = {
-        ".git",
-        "nimcache",
-        "testresults",
-      },
-    },
-  },
-  filterParams = {
-    matcher_ignore_files = {
-      ignoreGlobs = { "testresults.html", ".DS_Store" },
-    },
-  },
-  kindOptions = {
-    ui_select = {
-      defaultAction = "select",
-    },
-  },
-})
+artemis.fn.ddu.custom.load_config(vim.env.HOOK_DIR .. "/ddu-ff.ts")
 
 customAction("ui", "ff", "select", function()
   local item = artemis.fn.ddu.ui.get_item()
@@ -164,61 +98,7 @@ vim.keymap.set("n", "<Space><Space>", function()
 end)
 
 -- ddu-filer
-artemis.fn.ddu.custom.patch_local("side_filer", {
-  ui = "filer",
-  uiParams = {
-    filer = {
-      startAutoAction = true,
-      autoAction = {
-        delay = 0,
-        name = "updatePreview",
-      },
-      displayRoot = false,
-      sortTreesFirst = true,
-      split = "vertical",
-      splitDirection = "topleft",
-      statusline = false,
-      winWidth = 25,
-      -- previewFloating = true,
-      previewSplit = "no",
-      -- previewFloatingBorder = "rounded",
-      -- previewFloatingTitle = "Preview",
-      -- previewCol = 2,
-      -- previewWidth = vim.go.columns - (25 + 10),
-      -- previewHeight = 30,
-    },
-  },
-  sources = { "file" },
-  sourceOptions = {
-    ["_"] = {
-      matchers = {},
-      sorters = {
-        "sorter_alpha",
-      },
-      converters = {},
-    },
-    file = {
-      columns = {
-        "icon_filename",
-      },
-    },
-  },
-  filterParams = {
-    matcher_ignore_files = {
-      ignoreGlobs = { ".DS_Store" },
-    },
-  },
-  kindOptions = {
-    file = {
-      defaultAction = "open",
-    },
-  },
-  actionOptions = {
-    open = {
-      quit = false,
-    },
-  },
-})
+artemis.fn.ddu.custom.load_config(vim.env.HOOK_DIR .. "/ddu-filer.ts")
 
 customAction("ui", "filer", "filerOpen", function()
   local item = artemis.fn.ddu.ui.get_item()

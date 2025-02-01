@@ -1,6 +1,6 @@
 [[plugins]]
 repo = 'tpope/vim-eunuch'
-on_event = 'InsertEnter'
+on_event = ['InsertEnter', 'CmdlineEnter']
 on_cmd = [
   'Remove',
   'Delete',
@@ -26,3 +26,6 @@ on_event = ['BufRead', 'BufNewFile']
 lua_source = '''
   require("numb").setup()
 '''
+
+[[plugins]]
+repo = 'tani/vim-artemis'

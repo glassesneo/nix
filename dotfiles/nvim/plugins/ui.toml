@@ -1,6 +1,7 @@
 [[plugins]]
 repo = 'rcarriga/nvim-notify'
-on_event = 'VimEnter'
+on_event = 'CursorHold'
+on_lua = 'noice'
 lua_source = '''
   local notify = require("notify")
   notify.setup({
@@ -12,25 +13,19 @@ lua_source = '''
 '''
 
 [[plugins]]
-repo = 'j-hui/fidget.nvim'
-rev = "v1.4.5"
-on_event = 'VimEnter'
-hooks_file = "$HOOK_DIR/fidget.lua"
-
-[[plugins]]
 repo = 'MunifTanjim/nui.nvim'
 
 [[plugins]]
 repo = 'folke/noice.nvim'
-depends = ['nui.nvim', 'nvim-notify', 'nvim-treesitter']
-on_event = 'VimEnter'
-lua_source = '''
-  require('noice').setup({
-    messages = {
-      enabled = false,
-    },
-  })
-'''
+depends = ['nui.nvim', 'nvim-treesitter']
+on_event = ['CmdlineEnter']
+hooks_file = '$HOOK_DIR/noice.lua'
+
+[[plugins]]
+repo = 'j-hui/fidget.nvim'
+rev = "v1.5.0"
+on_event = 'LspAttach'
+hooks_file = "$HOOK_DIR/fidget.lua"
 
 [[plugins]]
 repo = 'matsui54/denops-popup-preview.vim'
@@ -44,4 +39,16 @@ lua_source = '''
   vim.keymap.set("i", "<C-b>", function()
     vim.fn["popup_preview#scroll"](-4)
   end)
+'''
+
+[[plugins]]
+repo = 'matsui54/denops-signature_help'
+depends = 'denops.vim'
+on_event = 'LspAttach'
+lua_source = '''
+  vim.fn["signature_help#enable"]()
+  vim.g.signature_help_config = {
+    contentsStyle = "labels",
+    viewStyle = "floating"
+  }
 '''

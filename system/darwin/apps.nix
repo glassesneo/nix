@@ -170,6 +170,7 @@
       "monitorcontrol"
       "notion"
       "one-switch"
+      "orbstack"
       "proton-drive"
       "proton-pass"
       "raycast"

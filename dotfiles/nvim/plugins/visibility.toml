@@ -1,11 +1,12 @@
 [[plugins]]
 repo = 'shellRaining/hlchunk.nvim'
+depends = ['nvim-treesitter']
 on_event = ['BufNewFile', 'BufRead']
 hooks_file = "$HOOK_DIR/hlchunk.lua"
 
 [[plugins]]
 repo = 'gen740/SmoothCursor.nvim'
-on_event = 'VimEnter'
+on_event = ['BufNewFile', 'BufRead']
 lua_source = '''
   require("smoothcursor").setup({
     type = "default",
@@ -50,6 +51,7 @@ lua_source = '''
 [[plugins]]
 repo = 'm-demare/hlargs.nvim'
 depends = ['nvim-treesitter']
+on_event = ['BufNewFile', 'BufRead']
 lua_source = '''
   require("hlargs").setup({})
 '''
@@ -63,15 +65,15 @@ lua_source = '''
   })
 '''
 
-[[plugins]]
-repo = 'xiyaowong/transparent.nvim'
-lazy = false
-hooks_file = '$HOOK_DIR/transparent.lua'
+# [[plugins]]
+# repo = 'xiyaowong/transparent.nvim'
+# lazy = false
+# hooks_file = '$HOOK_DIR/transparent.lua'
 
 [[plugins]]
 repo = 'andersevenrud/nvim_context_vt'
 depends = ['nvim-treesitter']
-on_event = ['BufReadPre', 'BufNewFile']
+on_event = ['BufNewFile', 'BufRead']
 lua_source = '''
   require("nvim_context_vt").setup({
     prefix = "",

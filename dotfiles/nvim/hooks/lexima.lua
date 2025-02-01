@@ -1,5 +1,6 @@
 --- lua_source {{{
 local artemis = require("artemis")
+-- Nim
 artemis.fn.lexima.add_rule({
   char = ".",
   at = [[{\%#}]],
@@ -18,4 +19,5 @@ artemis.fn.lexima.add_rule({
   delete = 1,
   filetype = { "nim", "nims", "nimble" },
 })
+
 --- }}}

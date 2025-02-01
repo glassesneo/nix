@@ -20,10 +20,7 @@ vim.api.nvim_create_autocmd("User", {
   group = skkeleton_hook_group,
   pattern = "skkeleton-disable-pre",
   callback = function()
-    local luasnip = require("luasnip")
-    vim.keymap.set({ "i", "s" }, "<C-l>", function()
-      luasnip.jump(1)
-    end)
+    vim.keymap.set({ "i", "s" }, "<C-l>", "<Plug>(denippet-jump-next)")
   end,
 })
 

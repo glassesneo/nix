@@ -9,7 +9,170 @@ local lspformat_on_attach = function(client, bufnr)
   require("lsp-format").on_attach(client, bufnr)
 end
 
+local efm_languages = {}
+
+local filetype_config = {
+  elm = {
+    efm = {
+      {
+        formatCommand = "elm-format --stdin",
+        formatStdin = true,
+      },
+    },
+  },
+  -- go = {
+  --   efm = {
+  --     {
+  --       formatCommand = "gofmt",
+  --       formatStdin = true,
+  --       lintCommand = "golangci-lint run",
+  --       lintStdin = true,
+  --     },
+  --   },
+  -- },
+  -- haskell = {
+  --   efm = {
+  --     {
+  --       formatCommand = "stack exec fourmolu --stdin-input-file",
+  --       formatStdin = true,
+  --     },
+  --   },
+  -- },
+  lua = {
+    efm = {
+      {
+        formatCommand = "stylua --indent-type Spaces --indent-width 2 -",
+        formatStdin = true,
+      },
+    },
+  },
+  nim = {
+    efm = {
+      {
+        formatCommand = "nph -",
+        formatStdin = true,
+      },
+    },
+  },
+  nix = {
+    efm = {
+      {
+        formatCommand = "nixfmt -",
+        formatStdin = true,
+      },
+    },
+  },
+  python = {
+    efm = {
+      {
+        formatCommand = "ruff format -",
+        formatStdin = true,
+      },
+    },
+  },
+  scala = {
+    efm = {
+      {
+        formatCommand = "scalafmt --stdin --non-interactive",
+        formatCanRange = true,
+        formatStdin = true,
+      },
+    },
+  },
+  sql = {
+    filetypes = { "sql", "mysql" },
+    efm = {
+      {
+        formatCommand = "sql-formatter",
+        formatCanRange = true,
+        formatStdin = true,
+      },
+    },
+  },
+  svelte = {},
+  toml = {
+    efm = {
+      {
+        formatCommand = "taplo format -",
+        formatStdin = true,
+      },
+    },
+  },
+  typescript = {
+    filetypes = { "typescript", "typescriptreact", "javascript" },
+    efm = {
+      {
+        formatCommand = "biome check --apply --stdin-file-path '${INPUT}'",
+        formatStdin = true,
+        rootMarkers = { "biome.json", "package.json" },
+      },
+    },
+  },
+  kotlin = {
+    filetypes = { "kotlin", "kotlin.kts" },
+    efm = {
+      {
+        formatCommand = "ktfmt -",
+        formatStdin = true,
+      },
+    },
+  },
+  v = {
+    filetypes = { "v", "vsh", "vv" },
+    efm = {
+      {
+        formatCommand = "v fmt",
+        formatStdin = true,
+      },
+    },
+  },
+  zig = {
+    filetypes = { "zig", "zir", "zon" },
+    efm = {
+      {
+        formatCommand = "zig fmt --stdin",
+        formatStdin = true,
+      },
+    },
+  },
+}
+
+---@param ft string
+---@param config { efm: table, extraSources: string[] }
+local register_language = function(ft, config)
+  efm_languages[ft] = config.efm or {}
+end
+
+for ft, config in pairs(filetype_config) do
+  if config.filetypes ~= nil then
+    for _, ft2 in ipairs(config.filetypes) do
+      register_language(ft2, config)
+    end
+  else
+    register_language(ft, config)
+  end
+end
+
+require("ddc_source_lsp_setup").setup({
+  override_capabilities = true,
+  respect_trigger = true,
+})
+
 local servers = {
+  efm = {
+    on_attach = lspformat_on_attach,
+    init_options = {
+      documentFormatting = true,
+      documentRangeFormatting = true,
+    },
+    single_file_support = true,
+    settings = {
+      rootMarkers = {
+        ".git/",
+      },
+      languages = efm_languages,
+    },
+  },
   denols = {
     single_file_support = true,
     root_dir = lspconfig.util.root_pattern("deno.json"),
@@ -91,6 +254,11 @@ local servers = {
       },
     },
   },
+  -- nim_langserver = {
+  --   settings = {
+  --     single_file_support = false,
+  --   },
+  -- },
   pylyzer = {
     settings = {
       python = {
@@ -131,15 +299,23 @@ local servers = {
       },
     },
   },
+  vimls = {},
   v_analyzer = {},
   zls = {
     settings = {
       zls = {
+        enable_snippets = true,
+        enable_ast_check_diagnostics = true,
+        enable_autofix = true,
+        enable_import_embedfile_argument_completions = true,
+        warn_style = true,
+        enable_semantic_tokens = true,
         enable_inlay_hints = true,
         inlay_hints_show_builtin = true,
-        inlay_hints_exclude_single_argument = true,
-        inlay_hints_hide_redundant_param_names = false,
-        inlay_hints_hide_redundant_param_names_last_token = false,
+        inlay_hints_hide_redundant_param_names = true,
+        inlay_hints_hide_redundant_param_names_last_token = true,
+        operator_completions = true,
+        include_at_in_builtins = true,
       },
     },
   },
